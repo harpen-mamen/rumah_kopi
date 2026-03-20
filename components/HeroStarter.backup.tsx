@@ -32,7 +32,7 @@ export default function HeroStarter() {
       </video>
 
       {/* OVERLAY global */}
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black/50" />
 
       {/* GRADIENT stânga — lizibilitate text */}
       <div className="absolute inset-0" style={{
@@ -47,7 +47,7 @@ export default function HeroStarter() {
 
           {/* DESCRIPTOR */}
           <div className="hero-animate hero-delay-1 mb-2">
-            <span className="handwrite text-3xl sm:text-5xl" style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}>
+            <span className="handwrite text-5xl" style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}>
               Welcome to the place
             </span>
           </div>
@@ -69,33 +69,18 @@ export default function HeroStarter() {
             className="hero-animate hero-delay-3 text-sm mt-4 mb-10 font-medium tracking-widest uppercase"
             style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}
           >
-            Fresh roasts · Expert baristas · Home away from home
+            Fresh roasts · Expert baristas · A place that feels like home
           </p>
 
           {/* BUTOANE CTA */}
-          <div className="hero-animate hero-delay-3 flex flex-col sm:flex-row gap-3">
-            {/* PRIMARY CTA */}
-            <button
-              onClick={() => scrollToSection('menu')}
-              className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/40 text-center"
-            >
-              Discover Our Drinks
+          <div className="hero-animate hero-delay-3 flex flex-row gap-4">
+            <button onClick={() => scrollToSection('menu')} className="whitespace-nowrap px-8 py-4 bg-black/30 hover:bg-black/50 text-white font-semibold rounded-lg border border-white/50 hover:border-white transition-all backdrop-blur-sm">
+              View Menu
             </button>
-            {/* SECONDARY */}
-            <a
-              href="https://instagram.com/vibecaffe"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/30 hover:border-white/60 transition-all duration-300 backdrop-blur-sm text-center"
-            >
+            <a href="https://instagram.com/vibecaffe" target="_blank" rel="noopener noreferrer" className="whitespace-nowrap px-8 py-4 bg-black/30 hover:bg-black/50 text-white font-semibold rounded-lg border border-white/50 hover:border-white transition-all backdrop-blur-sm">
               Follow Us
             </a>
-            <a
-              href="https://www.google.com/maps/search/Vibe+Caffe+Milton+Keynes"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/30 hover:border-white/60 transition-all duration-300 backdrop-blur-sm text-center"
-            >
+            <a href="https://www.google.com/maps/search/Vibe+Caffe+Milton+Keynes" target="_blank" rel="noopener noreferrer" className="whitespace-nowrap px-8 py-4 bg-black/30 hover:bg-black/50 text-white font-semibold rounded-lg border border-white/50 hover:border-white transition-all backdrop-blur-sm">
               Leave a Review
             </a>
           </div>

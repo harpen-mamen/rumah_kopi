@@ -13,7 +13,12 @@
  */
 
 // Importăm componentele starter (versiuni simple)
+import Navigation from '@/components/Navigation';
 import HeroStarter from '@/components/HeroStarter';
+import Features from '@/components/Features';
+import About from '@/components/About';
+import Menu from '@/components/Menu';
+import Location from '@/components/Location';
 import FooterStarter from '@/components/FooterStarter';
 
 /**
@@ -33,7 +38,12 @@ export default function Home() {
         Între Hero și Footer vom construi împreună toate secțiunile!
       */}
 
+      <Navigation />
       <HeroStarter />
+      <Features />
+      <About />
+      <Menu />
+      <Location />
       <FooterStarter />
 
       {/*

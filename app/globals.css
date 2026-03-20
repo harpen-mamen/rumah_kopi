@@ -265,6 +265,47 @@ button:active, .btn:active {
   }
 }
 
+/* ✍️ HANDWRITING ANIMATION */
+@keyframes handwrite {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.handwrite {
+  font-family: var(--font-handwriting), cursive;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  animation: handwrite 3.5s ease-in-out 0.8s forwards;
+}
+
+.font-handwriting {
+  font-family: var(--font-handwriting), cursive !important;
+}
+
+/* 🎬 HERO STAGGERED ANIMATIONS */
+@keyframes heroFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hero-animate {
+  opacity: 0;
+  animation: heroFadeInUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-delay-1 { animation-delay: 0.3s; }
+.hero-delay-2 { animation-delay: 0.6s; }
+.hero-delay-3 { animation-delay: 0.9s; }
+.hero-delay-4 { animation-delay: 1.3s; }
+
 /* Smooth scroll behavior - dezactivat pentru Lenis */
 html.lenis {
   height: auto;

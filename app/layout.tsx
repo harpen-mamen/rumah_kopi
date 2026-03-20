@@ -1,5 +1,19 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Great_Vibes, Playfair_Display } from "next/font/google";
+
+const greatVibes = Great_Vibes({
+  variable: "--font-handwriting",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
 import "./globals.css";
 
 // 🎨 TIPOGRAFIE 100% SANS-SERIF - MODERN CLEAN
@@ -24,15 +38,15 @@ const inter = Inter({
  * Pentru cursanți: Metadata = informații pentru Google și social media
  */
 export const metadata: Metadata = {
-  title: "Vibe Coffee - Cafea de Specialitate în București",
-  description: "Descoperă aromele autentice ale cafelei de specialitate într-un ambient modern și prietenos. Boabe proaspăt prăjite, bariști experimentați, WiFi gratuit.",
-  keywords: ["cafenea bucuresti", "cafea specialitate", "coffee shop", "vibe coffee"],
+  title: "Vibe Coffee - Specialty Coffee in Bucharest",
+  description: "Discover the authentic flavours of specialty coffee in a modern and friendly atmosphere. Freshly roasted beans, experienced baristas, free WiFi.",
+  keywords: ["coffee shop bucharest", "specialty coffee", "coffee shop", "vibe coffee"],
   authors: [{ name: "Vibe Coffee Team" }],
   openGraph: {
-    title: "Vibe Coffee - Cafea de Specialitate",
-    description: "Locul perfect pentru cafeaua ta zilnică",
+    title: "Vibe Coffee - Specialty Coffee",
+    description: "The perfect place for your daily coffee",
     type: "website",
-    locale: "ro_RO",
+    locale: "en_US",
   },
   robots: {
     index: true,
@@ -59,9 +73,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ro">
+    <html lang="en">
       <body
-        className={`${plusJakarta.variable} ${inter.variable} antialiased`}
+        className={`${plusJakarta.variable} ${inter.variable} ${greatVibes.variable} ${playfair.variable} antialiased`}
       >
         {children}
       </body>
