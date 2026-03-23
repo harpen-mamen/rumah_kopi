@@ -28,15 +28,33 @@ export default function Features() {
   });
 
   return (
-    <section id="features" className="py-24 px-6 bg-gray-100">
-      <div className="max-w-7xl mx-auto">
+    <section id="features" className="relative py-24 px-6 overflow-hidden">
+
+      {/* VIDEO BACKGROUND */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: 'brightness(0.55)' }}
+      >
+        {/* Înlocuiește cu /features-cafe.mp4 când ai un video cozy de cafenea */}
+        <source src="/hero-coffee.mp4" type="video/mp4" />
+      </video>
+
+      {/* OVERLAY warm */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
 
         {/* HEADER */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold text-gray-900 mb-4">
-            Why <span className="text-amber-500">Vibe Caffè</span>?
+          <h2 className="text-5xl font-bold text-white mb-4"
+            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
+            Why <span className="text-amber-400">Vibe Caffè</span>?
           </h2>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+          <p className="text-xl text-white/80 max-w-2xl mx-auto">
             Unique experience, premium ingredients, perfect atmosphere
           </p>
         </div>
@@ -48,7 +66,7 @@ export default function Features() {
           <div
             ref={card1.ref}
             style={fadeStyle(card1.visible, 0)}
-            className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 flex flex-col cursor-pointer hover:shadow-xl transition-shadow duration-300 min-h-[400px] md:min-h-full"
+            className="group bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col cursor-pointer hover:shadow-[0_25px_60px_rgba(0,0,0,0.4)] transition-shadow duration-300 min-h-[400px] md:min-h-full"
           >
             <div className="h-[40%] overflow-hidden">
               <img
@@ -72,7 +90,7 @@ export default function Features() {
             <div
               ref={card2.ref}
               style={fadeStyle(card2.visible, 150)}
-              className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 flex flex-col cursor-pointer hover:shadow-xl transition-shadow duration-300 flex-1 min-h-[250px]"
+              className="group bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col cursor-pointer hover:shadow-[0_25px_60px_rgba(0,0,0,0.4)] transition-shadow duration-300 flex-1 min-h-[250px]"
             >
               <div className="h-[40%] overflow-hidden">
                 <img
@@ -93,7 +111,7 @@ export default function Features() {
             <div
               ref={card3.ref}
               style={fadeStyle(card3.visible, 300)}
-              className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 flex flex-col cursor-pointer hover:shadow-xl transition-shadow duration-300 flex-1 min-h-[250px]"
+              className="group bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col cursor-pointer hover:shadow-[0_25px_60px_rgba(0,0,0,0.4)] transition-shadow duration-300 flex-1 min-h-[250px]"
             >
               <div className="h-[40%] overflow-hidden">
                 <img
