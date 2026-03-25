@@ -20,6 +20,13 @@ export default function Features() {
   const card1 = useVisible();
   const card2 = useVisible();
   const card3 = useVisible();
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.4;
+    }
+  }, []);
 
   const fadeStyle = (visible: boolean, delay: number) => ({
     opacity: visible ? 1 : 0,
@@ -32,6 +39,7 @@ export default function Features() {
 
       {/* VIDEO BACKGROUND */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
@@ -39,8 +47,7 @@ export default function Features() {
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: 'brightness(0.55)' }}
       >
-        {/* Înlocuiește cu /features-cafe.mp4 când ai un video cozy de cafenea */}
-        <source src="/hero-coffee.mp4" type="video/mp4" />
+        <source src="/features-cafe.mp4" type="video/mp4" />
       </video>
 
       {/* OVERLAY warm */}
