@@ -20,13 +20,6 @@ export default function Features() {
   const card1 = useVisible();
   const card2 = useVisible();
   const card3 = useVisible();
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.4;
-    }
-  }, []);
 
   const fadeStyle = (visible: boolean, delay: number) => ({
     opacity: visible ? 1 : 0,
@@ -35,33 +28,16 @@ export default function Features() {
   });
 
   return (
-    <section id="features" className="relative py-24 px-6 overflow-hidden">
-
-      {/* VIDEO BACKGROUND */}
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: 'brightness(0.55)' }}
-      >
-        <source src="/features-cafe.mp4" type="video/mp4" />
-      </video>
-
-      {/* OVERLAY warm */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
+    <section id="features" className="relative py-24 px-6 overflow-hidden bg-gray-100">
 
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* HEADER */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold text-white mb-4"
-            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
-            Why <span className="text-amber-400">Vibe Caffè</span>?
+          <h2 className="text-5xl font-bold text-gray-900 mb-4">
+            Why <span className="text-amber-500">Vibe Caffè</span>?
           </h2>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto">
             Unique experience, premium ingredients, perfect atmosphere
           </p>
         </div>

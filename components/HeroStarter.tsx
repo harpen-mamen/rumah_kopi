@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 /**
  * 🎯 HERO STARTER - Cu video background
@@ -8,6 +8,25 @@ import { useState } from 'react';
 
 export default function HeroStarter() {
   const [hovered, setHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    const tryPlay = () => { video.play().catch(() => {}); };
+    video.addEventListener('canplay', tryPlay);
+    video.addEventListener('loadedmetadata', tryPlay);
+    document.addEventListener('touchstart', tryPlay, { once: true });
+    tryPlay();
+    return () => {
+      video.removeEventListener('canplay', tryPlay);
+      video.removeEventListener('loadedmetadata', tryPlay);
+      document.removeEventListener('touchstart', tryPlay);
+    };
+  }, []);
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -18,25 +37,24 @@ export default function HeroStarter() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center bg-amber-950 pt-20">
+    <section className="relative min-h-screen flex items-center bg-stone-800 pt-20">
 
       {/* VIDEO BACKGROUND */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ pointerEvents: 'none' }}
       >
         <source src="/hero-coffee.mp4" type="video/mp4" />
       </video>
 
-      {/* OVERLAY global */}
-      <div className="absolute inset-0 bg-black/40" />
-
-      {/* GRADIENT stânga — lizibilitate text */}
+      {/* OVERLAY */}
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.05) 100%)'
+        background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.5) 100%)'
       }} />
 
       {/* CONTINUT - aliniat cu navbar */}
@@ -47,18 +65,19 @@ export default function HeroStarter() {
 
           {/* DESCRIPTOR */}
           <div className="hero-animate hero-delay-1 mb-2">
-            <span className="handwrite text-3xl sm:text-5xl" style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}>
+            <span className="handwrite text-2xl sm:text-4xl" style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}>
               Welcome to the place
             </span>
           </div>
 
           {/* TITLU PRINCIPAL */}
           <h1
-            className="hero-animate hero-delay-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+            className="hero-animate hero-delay-2 font-bold mb-4 leading-snug"
             style={{
               color: '#FFF8F0',
               fontFamily: 'var(--font-playfair), Georgia, serif',
-              textShadow: '0 4px 24px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.8)'
+              textShadow: '0 4px 24px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.8)',
+              fontSize: 'clamp(1.6rem, 6vw, 3.5rem)',
             }}
           >
             Where coffee brings people together
