@@ -21,12 +21,12 @@ export default function About() {
   const image = useVisible();
 
   return (
-    <section id="about" className="py-24 px-6 bg-gray-200">
+    <section id="about" className="py-16 px-6 bg-gray-200">
       <div className="max-w-7xl mx-auto">
 
         {/* HEADER */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-10">
+          <h2 className="font-bold text-gray-900 mb-3" style={{ fontSize: 'clamp(1.8rem, 3vw, 2.8rem)' }}>
             Our <span className="text-amber-600">Story</span>
           </h2>
           <p className="text-xl text-gray-500 max-w-2xl mx-auto">

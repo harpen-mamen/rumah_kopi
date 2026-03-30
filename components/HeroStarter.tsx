@@ -105,7 +105,7 @@ export default function HeroStarter() {
               href="https://instagram.com/vibecaffe"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/30 hover:border-white/60 transition-all duration-300 backdrop-blur-sm text-center"
+              className="px-8 py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full border-2 border-white/60 hover:border-white transition-all duration-300 backdrop-blur-sm text-center"
             >
               Follow Us
             </a>
@@ -113,7 +113,7 @@ export default function HeroStarter() {
               href="https://www.google.com/maps/search/Vibe+Caffe+Milton+Keynes"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/30 hover:border-white/60 transition-all duration-300 backdrop-blur-sm text-center"
+              className="px-8 py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full border-2 border-white/60 hover:border-white transition-all duration-300 backdrop-blur-sm text-center"
             >
               Leave a Review
             </a>

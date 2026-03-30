@@ -29,12 +29,12 @@ export default function Location() {
   return (
     <section
       id="location"
-      className="py-24 px-6 bg-gray-200"
+      className="py-16 px-6 bg-gray-200"
     >
       <div className="max-w-7xl mx-auto">
 
         {/* HEADER */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <h2 className="text-5xl font-bold text-gray-900 mb-4">
             Find <span className="text-amber-500">Us</span>
           </h2>

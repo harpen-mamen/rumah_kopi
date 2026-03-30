@@ -46,10 +46,51 @@ export default function ReservationsPage() {
   const [step, setStep] = useState(1);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [form, setForm] = useState({ name: '', email: '', phone: '', guests: '2' });
+  const [form, setForm] = useState({ name: '', email: '', phonePrefix: '+44', phone: '', guests: '2' });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  function validateForm() {
+    const errors: Record<string, string> = {};
+    if (form.name.trim().length < 3 || !form.name.trim().includes(' '))
+      errors.name = 'Enter your full name (first and last)';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      errors.email = 'Enter a valid email address';
+    const digits = form.phone.replace(/[\s\-().]/g, '');
+    if (!/^\d{6,12}$/.test(digits))
+      errors.phone = 'Enter a valid phone number (digits only, no prefix)';
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  const COUNTRIES = [
+    { code: '+44', flag: '🇬🇧', name: 'UK' },
+    { code: '+40', flag: '🇷🇴', name: 'Romania' },
+    { code: '+1',  flag: '🇺🇸', name: 'USA' },
+    { code: '+33', flag: '🇫🇷', name: 'France' },
+    { code: '+49', flag: '🇩🇪', name: 'Germany' },
+    { code: '+39', flag: '🇮🇹', name: 'Italy' },
+    { code: '+34', flag: '🇪🇸', name: 'Spain' },
+    { code: '+31', flag: '🇳🇱', name: 'Netherlands' },
+    { code: '+32', flag: '🇧🇪', name: 'Belgium' },
+    { code: '+41', flag: '🇨🇭', name: 'Switzerland' },
+    { code: '+43', flag: '🇦🇹', name: 'Austria' },
+    { code: '+48', flag: '🇵🇱', name: 'Poland' },
+    { code: '+380', flag: '🇺🇦', name: 'Ukraine' },
+    { code: '+373', flag: '🇲🇩', name: 'Moldova' },
+    { code: '+7',  flag: '🇷🇺', name: 'Russia' },
+    { code: '+90', flag: '🇹🇷', name: 'Turkey' },
+    { code: '+971', flag: '🇦🇪', name: 'UAE' },
+    { code: '+91', flag: '🇮🇳', name: 'India' },
+    { code: '+86', flag: '🇨🇳', name: 'China' },
+    { code: '+81', flag: '🇯🇵', name: 'Japan' },
+    { code: '+61', flag: '🇦🇺', name: 'Australia' },
+    { code: '+55', flag: '🇧🇷', name: 'Brazil' },
+    { code: '+52', flag: '🇲🇽', name: 'Mexico' },
+  ];
+
 
   // Quick day buttons: next 14 days
   const quickDays = Array.from({ length: 14 }, (_, i) => {
@@ -83,13 +124,14 @@ export default function ReservationsPage() {
   ];
 
   async function handleSubmit() {
+    if (!validateForm()) return;
     setLoading(true);
     setError('');
     try {
       const res = await fetch('/api/reservations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, email: form.email, phone: form.phone, guests: Number(form.guests), date, time }),
+        body: JSON.stringify({ name: form.name, email: form.email, phone: `${form.phonePrefix}${form.phone}`, guests: Number(form.guests), date, time }),
       });
       const data = await res.json();
       if (data.success) setSubmitted(true);
@@ -102,7 +144,7 @@ export default function ReservationsPage() {
 
   function reset() {
     setStep(1); setDate(''); setTime('');
-    setForm({ name: '', email: '', phone: '', guests: '2' });
+    setForm({ name: '', email: '', phonePrefix: '+44', phone: '', guests: '2' });
     setSubmitted(false); setError('');
   }
 
@@ -133,15 +175,12 @@ export default function ReservationsPage() {
       </div>
 
       {/* FORM SECTION */}
-      <section
-        className="min-h-screen py-12 sm:py-20 px-4 sm:px-6"
-        style={{ background: 'linear-gradient(135deg, #0D9488 0%, #0f766e 50%, #134e4a 100%)' }}
-      >
+      <section className="min-h-screen py-12 sm:py-20 px-4 sm:px-6 bg-gray-100">
         <div className="max-w-lg mx-auto w-full">
 
           {submitted ? (
             /* SUCCESS */
-            <div className="glass rounded-3xl p-8 sm:p-12 text-center">
+            <div className="bg-white rounded-3xl p-8 sm:p-12 text-center shadow-xl border border-gray-200">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
                 style={{ background: 'rgba(249,115,22,0.15)', border: '2px solid rgba(249,115,22,0.4)' }}>
                 <svg className="w-8 h-8" fill="none" stroke="#F97316" viewBox="0 0 24 24">
@@ -164,7 +203,7 @@ export default function ReservationsPage() {
               </button>
             </div>
           ) : (
-            <div className="glass rounded-3xl overflow-hidden shadow-2xl">
+            <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-200">
 
               {/* PROGRESS */}
               <div className="flex">
@@ -316,17 +355,41 @@ export default function ReservationsPage() {
                       {[
                         { label: 'Full Name *', type: 'text', key: 'name', placeholder: 'Jane Smith' },
                         { label: 'Email *', type: 'email', key: 'email', placeholder: 'jane@example.com' },
-                        { label: 'Phone *', type: 'tel', key: 'phone', placeholder: '+44 7700 000000' },
                       ].map(({ label, type, key, placeholder }) => (
                         <div key={key} className="flex flex-col gap-1">
                           <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{label}</label>
                           <input type={type} value={form[key as keyof typeof form]}
-                            onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                            onChange={(e) => { setForm({ ...form, [key]: e.target.value }); setFieldErrors(prev => ({ ...prev, [key]: '' })); }}
                             placeholder={placeholder}
                             className="px-4 py-3 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2"
-                            style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.5)', focusRingColor: '#14B8A6' } as React.CSSProperties} />
+                            style={{ background: 'white', border: fieldErrors[key] ? '1px solid #EF4444' : '1px solid #e5e7eb' }} />
+                          {fieldErrors[key] && <p className="text-xs text-red-500 mt-0.5">{fieldErrors[key]}</p>}
                         </div>
                       ))}
+
+                      {/* PHONE cu selector prefix */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Phone *</label>
+                        <div className="flex gap-2">
+                          <select
+                            value={form.phonePrefix}
+                            onChange={(e) => setForm({ ...form, phonePrefix: e.target.value })}
+                            className="px-3 py-3 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 flex-shrink-0"
+                            style={{ background: 'white', border: '1px solid #e5e7eb', minWidth: '130px' }}>
+                            {COUNTRIES.map((c) => (
+                              <option key={c.code} value={c.code}>{c.flag} {c.name} ({c.code})</option>
+                            ))}
+                          </select>
+                          <input
+                            type="tel"
+                            value={form.phone}
+                            onChange={(e) => { setForm({ ...form, phone: e.target.value }); setFieldErrors(prev => ({ ...prev, phone: '' })); }}
+                            placeholder="7700 000000"
+                            className="flex-1 px-4 py-3 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2"
+                            style={{ background: 'white', border: fieldErrors.phone ? '1px solid #EF4444' : '1px solid #e5e7eb' }} />
+                        </div>
+                        {fieldErrors.phone && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.phone}</p>}
+                      </div>
                       <div className="flex flex-col gap-1">
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Number of guests</label>
                         <select value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })}
@@ -348,9 +411,9 @@ export default function ReservationsPage() {
                         ← Back
                       </button>
                       <button onClick={handleSubmit}
-                        disabled={!form.name || !form.email || !form.phone || loading}
+                        disabled={loading}
                         className="flex-1 py-4 text-white font-bold rounded-xl transition-all text-sm disabled:opacity-40 flex items-center justify-center gap-2"
-                        style={{ background: (!form.name || !form.email || !form.phone || loading) ? '#d1d5db' : '#F97316' }}>
+                        style={{ background: loading ? '#d1d5db' : '#F97316' }}>
                         {loading ? (
                           <>
                             <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">

@@ -38,9 +38,9 @@ const inter = Inter({
  * Pentru cursanți: Metadata = informații pentru Google și social media
  */
 export const metadata: Metadata = {
-  title: "Vibe Coffee - Specialty Coffee in Bucharest",
+  title: "Vibe Caffè - Specialty Coffee in Milton Keynes",
   description: "Discover the authentic flavours of specialty coffee in a modern and friendly atmosphere. Freshly roasted beans, experienced baristas, free WiFi.",
-  keywords: ["coffee shop bucharest", "specialty coffee", "coffee shop", "vibe coffee"],
+  keywords: ["coffee shop milton keynes", "specialty coffee", "coffee shop", "vibe caffe"],
   authors: [{ name: "Vibe Coffee Team" }],
   openGraph: {
     title: "Vibe Coffee - Specialty Coffee",
