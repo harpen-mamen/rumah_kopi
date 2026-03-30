@@ -1,10 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = 'nicu.nickname@gmail.com'
 const FROM = 'Vibe Caffè <onboarding@resend.dev>'
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+})
+
+async function sendToClient(to: string, subject: string, html: string) {
+  await transporter.sendMail({
+    from: `Vibe Caffè <${process.env.GMAIL_USER}>`,
+    to,
+    subject,
+    html,
+  })
+}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', {
@@ -27,24 +45,19 @@ export async function POST(req: NextRequest) {
   }
 
   // Email multumire client
-  await resend.emails.send({
-    from: FROM,
-    to: email,
-    subject: '☕ Thank you for your reservation — Vibe Caffè',
-    html: `
-      <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
-        <h2 style="color:#111827;margin-bottom:4px;">Thank you, ${name}! ☕</h2>
-        <p style="color:#374151;margin-bottom:20px;">We've received your reservation request at <strong>Vibe Caffè</strong>. We're reviewing it and you'll receive a confirmation email shortly.</p>
-        <div style="background:white;border-radius:10px;padding:20px;margin:20px 0;border:1px solid #e5e7eb;">
-          <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">📅 <strong style="color:#111827;">${formatDate(date)}</strong></p>
-          <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">🕐 <strong style="color:#111827;">${time}</strong></p>
-          <p style="margin:0;color:#6b7280;font-size:14px;">👥 <strong style="color:#111827;">${guests} ${Number(guests) === 1 ? 'guest' : 'guests'}</strong></p>
-        </div>
-        <p style="color:#374151;">If you need to make any changes, please call us at <strong>+44 1908 000 000</strong>.</p>
-        <p style="color:#374151;margin-top:24px;">See you soon,<br/><strong>Vibe Caffè Team</strong> ☕</p>
+  await sendToClient(email, '☕ Thank you for your reservation — Vibe Caffè', `
+    <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
+      <h2 style="color:#111827;margin-bottom:4px;">Thank you, ${name}! ☕</h2>
+      <p style="color:#374151;margin-bottom:20px;">We've received your reservation request at <strong>Vibe Caffè</strong>. We're reviewing it and you'll receive a confirmation email shortly.</p>
+      <div style="background:white;border-radius:10px;padding:20px;margin:20px 0;border:1px solid #e5e7eb;">
+        <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">📅 <strong style="color:#111827;">${formatDate(date)}</strong></p>
+        <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">🕐 <strong style="color:#111827;">${time}</strong></p>
+        <p style="margin:0;color:#6b7280;font-size:14px;">👥 <strong style="color:#111827;">${guests} ${Number(guests) === 1 ? 'guest' : 'guests'}</strong></p>
       </div>
-    `,
-  })
+      <p style="color:#374151;">If you need to make any changes, please call us at <strong>+44 1908 000 000</strong>.</p>
+      <p style="color:#374151;margin-top:24px;">See you soon,<br/><strong>Vibe Caffè Team</strong> ☕</p>
+    </div>
+  `)
 
   // Email notificare admin
   await resend.emails.send({
@@ -99,42 +112,32 @@ export async function PATCH(req: NextRequest) {
 
   // Email către client la confirmare sau respingere
   if (status === 'confirmat') {
-    await resend.emails.send({
-      from: FROM,
-      to: reservation.email,
-      subject: '✅ Your reservation at Vibe Caffè is confirmed!',
-      html: `
-        <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
-          <h2 style="color:#0D9488;">Your reservation is confirmed! ☕</h2>
-          <p style="color:#374151;">Hi <strong>${reservation.name}</strong>, we're looking forward to seeing you!</p>
-          <div style="background:white;border-radius:10px;padding:20px;margin:20px 0;border:1px solid #e5e7eb;">
-            <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">📅 <strong style="color:#111827;">${formatDate(reservation.date)}</strong></p>
-            <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">🕐 <strong style="color:#111827;">${reservation.time}</strong></p>
-            <p style="margin:0;color:#6b7280;font-size:14px;">👥 <strong style="color:#111827;">${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}</strong></p>
-          </div>
-          <p style="color:#374151;">We'll have your table ready. If you need to cancel or make changes, please call us at <strong>+44 1908 000 000</strong>.</p>
-          <p style="color:#374151;margin-top:24px;">See you soon,<br/><strong>Vibe Caffè Team</strong> ☕</p>
+    await sendToClient(reservation.email, '✅ Your reservation at Vibe Caffè is confirmed!', `
+      <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
+        <h2 style="color:#0D9488;">Your reservation is confirmed! ☕</h2>
+        <p style="color:#374151;">Hi <strong>${reservation.name}</strong>, we're looking forward to seeing you!</p>
+        <div style="background:white;border-radius:10px;padding:20px;margin:20px 0;border:1px solid #e5e7eb;">
+          <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">📅 <strong style="color:#111827;">${formatDate(reservation.date)}</strong></p>
+          <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">🕐 <strong style="color:#111827;">${reservation.time}</strong></p>
+          <p style="margin:0;color:#6b7280;font-size:14px;">👥 <strong style="color:#111827;">${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}</strong></p>
         </div>
-      `,
-    })
+        <p style="color:#374151;">We'll have your table ready. If you need to cancel or make changes, please call us at <strong>+44 1908 000 000</strong>.</p>
+        <p style="color:#374151;margin-top:24px;">See you soon,<br/><strong>Vibe Caffè Team</strong> ☕</p>
+      </div>
+    `)
   }
 
   if (status === 'respins') {
-    await resend.emails.send({
-      from: FROM,
-      to: reservation.email,
-      subject: 'Your reservation at Vibe Caffè',
-      html: `
-        <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
-          <h2 style="color:#EF4444;">Reservation Update</h2>
-          <p style="color:#374151;">Hi <strong>${reservation.name}</strong>,</p>
-          <p style="color:#374151;">Unfortunately, we are unable to accommodate your reservation for <strong>${formatDate(reservation.date)}</strong> at <strong>${reservation.time}</strong> for <strong>${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}</strong>.</p>
-          <p style="color:#374151;">This may be due to full capacity at that time or a scheduling conflict. We're sorry for the inconvenience.</p>
-          <p style="color:#374151;">Please try booking a different date or time, or call us directly at <strong>+44 1908 000 000</strong> and we'll do our best to find a solution.</p>
-          <p style="color:#374151;margin-top:24px;">We hope to see you at Vibe Caffè soon!<br/><strong>Vibe Caffè Team</strong> ☕</p>
-        </div>
-      `,
-    })
+    await sendToClient(reservation.email, 'Your reservation at Vibe Caffè', `
+      <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
+        <h2 style="color:#EF4444;">Reservation Update</h2>
+        <p style="color:#374151;">Hi <strong>${reservation.name}</strong>,</p>
+        <p style="color:#374151;">Unfortunately, we are unable to accommodate your reservation for <strong>${formatDate(reservation.date)}</strong> at <strong>${reservation.time}</strong> for <strong>${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}</strong>.</p>
+        <p style="color:#374151;">This may be due to full capacity at that time or a scheduling conflict. We're sorry for the inconvenience.</p>
+        <p style="color:#374151;">Please try booking a different date or time, or call us directly at <strong>+44 1908 000 000</strong> and we'll do our best to find a solution.</p>
+        <p style="color:#374151;margin-top:24px;">We hope to see you at Vibe Caffè soon!<br/><strong>Vibe Caffè Team</strong> ☕</p>
+      </div>
+    `)
   }
 
   return NextResponse.json({ success: true, message: `Status updated: ${status}` })

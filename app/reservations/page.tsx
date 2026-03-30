@@ -370,12 +370,12 @@ export default function ReservationsPage() {
                       {/* PHONE cu selector prefix */}
                       <div className="flex flex-col gap-1">
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Phone *</label>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 overflow-hidden">
                           <select
                             value={form.phonePrefix}
                             onChange={(e) => setForm({ ...form, phonePrefix: e.target.value })}
                             className="px-3 py-3 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 flex-shrink-0"
-                            style={{ background: 'white', border: '1px solid #e5e7eb', minWidth: '130px' }}>
+                            style={{ background: 'white', border: '1px solid #e5e7eb', maxWidth: '140px' }}>
                             {COUNTRIES.map((c) => (
                               <option key={c.code} value={c.code}>{c.flag} {c.name} ({c.code})</option>
                             ))}
@@ -385,7 +385,7 @@ export default function ReservationsPage() {
                             value={form.phone}
                             onChange={(e) => { setForm({ ...form, phone: e.target.value }); setFieldErrors(prev => ({ ...prev, phone: '' })); }}
                             placeholder="7700 000000"
-                            className="flex-1 px-4 py-3 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2"
+                            className="flex-1 min-w-0 px-4 py-3 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2"
                             style={{ background: 'white', border: fieldErrors.phone ? '1px solid #EF4444' : '1px solid #e5e7eb' }} />
                         </div>
                         {fieldErrors.phone && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.phone}</p>}
