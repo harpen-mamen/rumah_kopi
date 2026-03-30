@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getReservations } from '@/app/actions/reservations';
 
 type Reservation = {
@@ -32,11 +33,21 @@ function formatDate(dateStr: string) {
   });
 }
 
-export default function ReservationsAdminPage() {
+function ReservationsContent() {
+  const searchParams = useSearchParams();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const today = new Date().toISOString().split('T')[0];
+
+  function getInitialFilter() {
+    const s = searchParams.get('status');
+    if (s === 'pending') return 'în așteptare';
+    if (s === 'confirmed') return 'confirmat';
+    if (s === 'today') return 'today';
+    return 'all';
+  }
+  const [filterStatus, setFilterStatus] = useState(getInitialFilter);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
 
   async function load() {
@@ -69,7 +80,9 @@ export default function ReservationsAdminPage() {
 
   const filtered = reservations.filter(r => {
     const matchSearch = r.name.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = filterStatus === 'all' || r.status === filterStatus;
+    const matchStatus = filterStatus === 'all'
+      || filterStatus === 'today' ? r.date === today
+      : r.status === filterStatus;
     return matchSearch && matchStatus;
   });
 
@@ -115,6 +128,7 @@ export default function ReservationsAdminPage() {
           className="px-4 py-2.5 rounded-xl text-sm text-gray-800 focus:outline-none"
           style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}>
           <option value="all">All statuses</option>
+          <option value="today">Today</option>
           <option value="în așteptare">Pending</option>
           <option value="confirmat">Confirmed</option>
           <option value="respins">Rejected</option>
@@ -236,5 +250,13 @@ export default function ReservationsAdminPage() {
         {filtered.length} reservation{filtered.length !== 1 ? 's' : ''} shown
       </p>
     </div>
+  );
+}
+
+export default function ReservationsAdminPage() {
+  return (
+    <Suspense fallback={<div className="bg-white rounded-2xl p-16 text-center shadow-sm border border-gray-200"><p className="text-gray-400">Loading...</p></div>}>
+      <ReservationsContent />
+    </Suspense>
   );
 }

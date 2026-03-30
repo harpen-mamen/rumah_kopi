@@ -26,6 +26,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, message: 'An error occurred. Please try again.' }, { status: 500 })
   }
 
+  // Email multumire client
+  await resend.emails.send({
+    from: FROM,
+    to: email,
+    subject: '☕ Thank you for your reservation — Vibe Caffè',
+    html: `
+      <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
+        <h2 style="color:#111827;margin-bottom:4px;">Thank you, ${name}! ☕</h2>
+        <p style="color:#374151;margin-bottom:20px;">We've received your reservation request at <strong>Vibe Caffè</strong>. We're reviewing it and you'll receive a confirmation email shortly.</p>
+        <div style="background:white;border-radius:10px;padding:20px;margin:20px 0;border:1px solid #e5e7eb;">
+          <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">📅 <strong style="color:#111827;">${formatDate(date)}</strong></p>
+          <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">🕐 <strong style="color:#111827;">${time}</strong></p>
+          <p style="margin:0;color:#6b7280;font-size:14px;">👥 <strong style="color:#111827;">${guests} ${Number(guests) === 1 ? 'guest' : 'guests'}</strong></p>
+        </div>
+        <p style="color:#374151;">If you need to make any changes, please call us at <strong>+44 1908 000 000</strong>.</p>
+        <p style="color:#374151;margin-top:24px;">See you soon,<br/><strong>Vibe Caffè Team</strong> ☕</p>
+      </div>
+    `,
+  })
+
   // Email notificare admin
   await resend.emails.send({
     from: FROM,

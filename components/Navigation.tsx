@@ -122,6 +122,13 @@ export default function Navigation() {
           >
             Reserve a table
           </a>
+          <a
+            href="/admin"
+            onClick={() => setMenuOpen(false)}
+            className="w-full text-center px-5 py-3 text-white/70 text-sm font-medium border border-white/20 rounded-full"
+          >
+            ⚙ Admin
+          </a>
         </div>
       )}
     </nav>
