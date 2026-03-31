@@ -333,7 +333,7 @@ export default function ReservationsPage() {
                     <div className="flex gap-3">
                       <button onClick={() => setStep(1)}
                         className="flex-1 py-4 font-semibold rounded-xl transition-all text-sm"
-                        style={{ background: 'rgba(255,255,255,0.5)', color: '#374151', border: '1px solid rgba(255,255,255,0.5)' }}>
+                        style={{ background: 'white', color: '#374151', border: '1px solid #e5e7eb' }}>
                         ← Back
                       </button>
                       <button onClick={() => setStep(3)} disabled={!time}
@@ -392,13 +392,19 @@ export default function ReservationsPage() {
                       </div>
                       <div className="flex flex-col gap-1">
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Number of guests</label>
-                        <select value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })}
-                          className="px-4 py-3 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2"
-                          style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.5)' }}>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
-                            <option key={n} value={n}>{n} {n === 1 ? 'guest' : 'guests'}</option>
-                          ))}
-                        </select>
+                        <div className="flex items-center gap-0 rounded-xl overflow-hidden" style={{ border: '1px solid #e5e7eb', background: 'white' }}>
+                          <button type="button"
+                            onClick={() => setForm({ ...form, guests: String(Math.max(1, Number(form.guests) - 1)) })}
+                            disabled={Number(form.guests) <= 1}
+                            className="px-5 py-3 text-xl font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-30 transition-colors">−</button>
+                          <span className="flex-1 text-center text-sm font-semibold text-gray-900">
+                            {form.guests} {Number(form.guests) === 1 ? 'guest' : 'guests'}
+                          </span>
+                          <button type="button"
+                            onClick={() => setForm({ ...form, guests: String(Math.min(12, Number(form.guests) + 1)) })}
+                            disabled={Number(form.guests) >= 12}
+                            className="px-5 py-3 text-xl font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-30 transition-colors">+</button>
+                        </div>
                       </div>
                     </div>
 
@@ -407,7 +413,7 @@ export default function ReservationsPage() {
                     <div className="flex gap-3">
                       <button onClick={() => setStep(2)}
                         className="flex-1 py-4 font-semibold rounded-xl transition-all text-sm"
-                        style={{ background: 'rgba(255,255,255,0.5)', color: '#374151', border: '1px solid rgba(255,255,255,0.5)' }}>
+                        style={{ background: 'white', color: '#374151', border: '1px solid #e5e7eb' }}>
                         ← Back
                       </button>
                       <button onClick={handleSubmit}
