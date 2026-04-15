@@ -455,7 +455,7 @@ export default function ChatWidget() {
 
           {/* MESSAGES */}
           <div
-            className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 bg-white"
+            className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-3 flex flex-col gap-3 bg-white"
             style={{ minHeight: 0, overscrollBehavior: 'contain' }}
             onWheel={e => e.stopPropagation()}
             onTouchMove={e => e.stopPropagation()}
@@ -463,14 +463,14 @@ export default function ChatWidget() {
             {messages.map((m, i) => {
               const isLastAssistant = m.role === 'assistant' && i === messages.length - 1 && !loading;
               return (
-                <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-                  <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
+                <div key={i} className={`flex flex-col min-w-0 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+                  <div className={`flex min-w-0 w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     {m.role === 'assistant' && (
                       <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mr-2 mt-0.5"
                         style={{ background: 'rgba(249,115,22,0.1)' }}>☕</div>
                     )}
                     <div
-                      className="max-w-[78%] px-3 py-2 rounded-2xl text-sm leading-relaxed"
+                      className="max-w-[75%] min-w-0 px-3 py-2 rounded-2xl text-sm leading-relaxed break-words"
                       style={m.role === 'user'
                         ? { background: '#F97316', color: 'white', borderBottomRightRadius: '4px' }
                         : { background: '#f9fafb', color: '#111827', borderBottomLeftRadius: '4px', border: '1px solid #f3f4f6' }}
