@@ -397,8 +397,8 @@ export default function ChatWidget() {
       {open && (
         <div
           className={`fixed z-50 flex flex-col overflow-hidden transition-all duration-300
-            bottom-0 right-0 left-0 top-0 rounded-none
-            sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[360px] sm:rounded-2xl sm:max-w-[calc(100vw-2rem)] sm:h-[520px]
+            bottom-0 right-0 left-0 top-0 w-screen max-w-full rounded-none
+            sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[360px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:h-[520px]
             ${minimized ? 'h-0 opacity-0 pointer-events-none' : 'h-[100dvh] opacity-100'}`}
           style={{
             border: '1px solid rgba(249,115,22,0.2)',
@@ -530,7 +530,7 @@ export default function ChatWidget() {
           </div>
 
           {/* INPUT */}
-          <div className="px-3 py-3 bg-white border-t border-gray-100 flex gap-2 shrink-0">
+          <div className="px-3 py-3 bg-white border-t border-gray-100 flex gap-2 shrink-0 min-w-0 overflow-hidden">
             <input
               ref={inputRef}
               type="text"
@@ -539,7 +539,7 @@ export default function ChatWidget() {
               onKeyDown={handleKey}
               placeholder={lang === 'ro' ? 'Scrie un mesaj...' : lang === 'fr' ? 'Écrire un message...' : lang === 'de' ? 'Nachricht schreiben...' : lang === 'es' ? 'Escribe un mensaje...' : 'Type a message...'}
               disabled={loading}
-              className="flex-1 px-3 py-2 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
+              className="flex-1 min-w-0 px-3 py-2 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
               style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}
             />
             <button
