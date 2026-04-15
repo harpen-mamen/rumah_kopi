@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 const LINK_REGEX = /\[([^\]]+)\]\(([^)]+)\)/g;
@@ -230,9 +230,21 @@ export default function ChatWidget() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const badgeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Track visual viewport height (handles iOS keyboard)
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setViewportHeight(vv.height);
+    update();
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    return () => { vv.removeEventListener('resize', update); vv.removeEventListener('scroll', update); };
+  }, []);
 
 
   useEffect(() => {
@@ -396,14 +408,15 @@ export default function ChatWidget() {
       {/* CHAT WINDOW */}
       {open && (
         <div
-          className={`fixed z-50 flex flex-col overflow-hidden transition-all duration-300
-            bottom-0 right-0 left-0 top-0 w-screen max-w-full rounded-none
-            sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[360px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:h-[520px]
+          className={`fixed z-50 flex flex-col overflow-hidden
+            left-0 right-0 bottom-0 w-screen max-w-full rounded-none
+            sm:bottom-24 sm:right-6 sm:left-auto sm:w-[360px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:h-[520px]
             ${minimized ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           style={{
             border: '1px solid rgba(249,115,22,0.2)',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-            height: minimized ? '0px' : undefined,
+            height: minimized ? '0px' : (viewportHeight ? `${viewportHeight}px` : '100dvh'),
+            top: 'auto',
           }}
         >
           {/* HEADER */}
@@ -531,9 +544,7 @@ export default function ChatWidget() {
           </div>
 
           {/* INPUT */}
-          <div className="px-3 py-3 bg-white border-t border-gray-100 flex gap-2 shrink-0 min-w-0 overflow-hidden"
-            style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
-          >
+          <div className="px-3 py-3 bg-white border-t border-gray-100 flex gap-2 shrink-0 min-w-0 overflow-hidden">
             <input
               ref={inputRef}
               type="text"
