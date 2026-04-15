@@ -453,7 +453,11 @@ export default function ChatWidget() {
           </div>
 
           {/* MESSAGES */}
-          <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 bg-white">
+          <div
+            className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 bg-white"
+            onWheel={e => e.stopPropagation()}
+            onTouchMove={e => e.stopPropagation()}
+          >
             {messages.map((m, i) => {
               const isLastAssistant = m.role === 'assistant' && i === messages.length - 1 && !loading;
               return (
