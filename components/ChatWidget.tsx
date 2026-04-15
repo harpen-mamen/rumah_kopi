@@ -14,12 +14,15 @@ function renderWithLinks(text: string): React.ReactNode[] {
     if (match.index > lastIndex) {
       result.push(text.slice(lastIndex, match.index));
     }
+    const href = match[2];
+    const label = match[1];
+    const key = match.index;
     result.push(
-      <a key={match.index} href={match[2]}
+      <a key={key} href={href}
         className="underline font-semibold hover:opacity-80 transition-opacity"
         style={{ color: '#15803D' }}
-        onClick={e => { e.preventDefault(); window.location.href = match![2]; }}
-      >{match[1]}</a>
+        onClick={e => { e.preventDefault(); window.location.href = href; }}
+      >{label}</a>
     );
     lastIndex = match.index + match[0].length;
   }
