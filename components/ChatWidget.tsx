@@ -14,7 +14,7 @@ function renderWithLinks(text: string) {
         result.push(
           <a key={i} href={match[2]}
             className="underline font-semibold hover:opacity-80 transition-opacity"
-            style={{ color: '#F97316' }}
+            style={{ color: '#0D9488' }}
             onClick={e => { e.preventDefault(); window.location.href = match[2]; }}
           >{match[1]}</a>
         );
@@ -367,11 +367,11 @@ export default function ChatWidget() {
         onClick={open ? () => setMinimized(m => !m) : handleOpen}
         aria-label="Open chat"
         className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${open && !minimized ? 'scale-95' : 'scale-100'}`}
-        style={{ background: 'linear-gradient(135deg, #F97316, #EA580C)' }}
+        style={{ background: 'linear-gradient(135deg, #14B8A6, #0D9488)' }}
       >
         {!open && (
           <span className="absolute inset-0 rounded-full animate-ping opacity-30"
-            style={{ background: '#F97316' }} />
+            style={{ background: '#14B8A6' }} />
         )}
         {badge && !open && (
           <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center z-10">1</span>
@@ -391,20 +391,23 @@ export default function ChatWidget() {
       {/* CHAT WINDOW */}
       {open && (
         <div
-          className="fixed bottom-24 right-6 z-50 w-[340px] max-w-[calc(100vw-2rem)] rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300"
+          className="fixed z-50 flex flex-col overflow-hidden transition-all duration-300
+            bottom-0 right-0 left-0 top-0 rounded-none
+            sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[360px] sm:rounded-2xl sm:max-w-[calc(100vw-2rem)]"
           style={{
-            height: minimized ? '0px' : '500px',
+            height: minimized ? '0px' : undefined,
             opacity: minimized ? 0 : 1,
             pointerEvents: minimized ? 'none' : 'auto',
-            border: '1px solid rgba(249,115,22,0.2)',
+            border: '1px solid rgba(20,184,166,0.25)',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
           }}
         >
           {/* HEADER */}
           <div className="px-4 py-3 flex items-center gap-3 shrink-0 relative"
-            style={{ background: 'linear-gradient(135deg, #F97316, #EA580C)' }}>
+            style={{ background: 'linear-gradient(135deg, #14B8A6, #0D9488)' }}>
             <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-lg shrink-0">☕</div>
             <div>
-              <p className="font-bold text-white text-sm leading-tight">Cleo</p>
+              <p className="font-bold text-white text-sm leading-tight" style={{ fontFamily: 'var(--font-plus-jakarta-sans, sans-serif)' }}>Cleo</p>
               <p className="text-white/70 text-xs">Barista Virtual · Vibe Caffè</p>
             </div>
             <div className="ml-auto flex items-center gap-2">
@@ -426,10 +429,10 @@ export default function ChatWidget() {
                   <div className="absolute right-0 top-8 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-10 w-40">
                     {LANGUAGES.map(l => (
                       <button key={l.code} onClick={() => changeLang(l.code)}
-                        className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-orange-50 transition-colors ${lang === l.code ? 'text-orange-500 font-semibold' : 'text-gray-700'}`}>
+                        className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-teal-50 transition-colors ${lang === l.code ? 'text-teal-600 font-semibold' : 'text-gray-700'}`}>
                         <span>{l.flag}</span>
                         <span>{l.label}</span>
-                        {lang === l.code && <span className="ml-auto text-orange-400">✓</span>}
+                        {lang === l.code && <span className="ml-auto text-teal-500">✓</span>}
                       </button>
                     ))}
                   </div>
@@ -456,12 +459,12 @@ export default function ChatWidget() {
                   <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
                     {m.role === 'assistant' && (
                       <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mr-2 mt-0.5"
-                        style={{ background: 'rgba(249,115,22,0.1)' }}>☕</div>
+                        style={{ background: 'rgba(20,184,166,0.12)' }}>☕</div>
                     )}
                     <div
                       className="max-w-[78%] px-3 py-2 rounded-2xl text-sm leading-relaxed"
                       style={m.role === 'user'
-                        ? { background: '#F97316', color: 'white', borderBottomRightRadius: '4px' }
+                        ? { background: '#14B8A6', color: 'white', borderBottomRightRadius: '4px' }
                         : { background: '#f9fafb', color: '#111827', borderBottomLeftRadius: '4px', border: '1px solid #f3f4f6' }}
                     >
                       {m.role === 'assistant' ? renderWithLinks(m.content) : m.content}
@@ -471,7 +474,7 @@ export default function ChatWidget() {
                     <button
                       onClick={() => { router.push('/reservations'); setOpen(false); }}
                       className="ml-9 mt-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-white transition-all active:scale-95"
-                      style={{ background: '#F97316' }}
+                      style={{ background: '#0D9488' }}
                     >
                       📅 {lang === 'ro' ? 'Rezervă acum' : lang === 'fr' ? 'Réserver' : lang === 'de' ? 'Reservieren' : lang === 'es' ? 'Reservar' : 'Book now'} →
                     </button>
@@ -481,8 +484,8 @@ export default function ChatWidget() {
                     <div className="ml-9 mt-2 flex flex-wrap gap-2">
                       {m.contextualReplies.map(q => (
                         <button key={q.text} onClick={() => send(q.text, true)}
-                          className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-orange-300 hover:text-orange-600 active:scale-95"
-                          style={{ background: 'white', borderColor: '#e5e7eb', color: '#374151' }}>
+                          className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-teal-400 hover:text-teal-700 active:scale-95"
+                          style={{ background: 'white', borderColor: '#99f6e4', color: '#0D9488' }}>
                           {q.label}
                         </button>
                       ))}
@@ -496,8 +499,8 @@ export default function ChatWidget() {
               <div className="flex flex-wrap gap-2 mt-1">
                 {quickReplies.map(q => (
                   <button key={q.text} onClick={() => send(q.text, true)}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-orange-300 hover:text-orange-600 active:scale-95"
-                    style={{ background: 'white', borderColor: '#e5e7eb', color: '#374151' }}>
+                    className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-teal-400 hover:text-teal-700 active:scale-95"
+                    style={{ background: 'white', borderColor: '#99f6e4', color: '#0D9488' }}>
                     {q.label}
                   </button>
                 ))}
@@ -507,7 +510,7 @@ export default function ChatWidget() {
             {loading && (
               <div className="flex justify-start">
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mr-2"
-                  style={{ background: 'rgba(249,115,22,0.1)' }}>☕</div>
+                  style={{ background: 'rgba(20,184,166,0.12)' }}>☕</div>
                 <div className="px-3 py-2 rounded-2xl text-sm bg-gray-50 border border-gray-100 flex gap-1 items-center">
                   <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -528,14 +531,14 @@ export default function ChatWidget() {
               onKeyDown={handleKey}
               placeholder={lang === 'ro' ? 'Scrie un mesaj...' : lang === 'fr' ? 'Écrire un message...' : lang === 'de' ? 'Nachricht schreiben...' : lang === 'es' ? 'Escribe un mensaje...' : 'Type a message...'}
               disabled={loading}
-              className="flex-1 px-3 py-2 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
+              className="flex-1 px-3 py-2 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-300 disabled:opacity-50"
               style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}
             />
             <button
               onClick={() => send()}
               disabled={!input.trim() || loading}
               className="w-9 h-9 rounded-xl flex items-center justify-center transition-all disabled:opacity-40 active:scale-95 shrink-0"
-              style={{ background: '#F97316' }}
+              style={{ background: '#0D9488' }}
             >
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
