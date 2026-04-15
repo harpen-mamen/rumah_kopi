@@ -372,7 +372,7 @@ export default function ChatWidget() {
         onClick={open ? () => setMinimized(m => !m) : handleOpen}
         aria-label="Open chat"
         className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${open && !minimized ? 'scale-95' : 'scale-100'}`}
-        style={{ background: 'linear-gradient(135deg, #F97316, #EA580C)' }}
+        style={{ background: 'linear-gradient(135deg, #F97316, #EA580C)', transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}
       >
         {!open && (
           <span className="absolute inset-0 rounded-full animate-ping opacity-30"
@@ -404,6 +404,8 @@ export default function ChatWidget() {
             border: '1px solid rgba(249,115,22,0.2)',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
             height: minimized ? '0px' : '500px',
+            transform: 'translateZ(0)',
+            WebkitTransform: 'translateZ(0)',
           }}
         >
           {/* HEADER */}
