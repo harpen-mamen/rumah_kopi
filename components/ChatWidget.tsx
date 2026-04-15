@@ -455,6 +455,7 @@ export default function ChatWidget() {
           {/* MESSAGES */}
           <div
             className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 bg-white"
+            style={{ minHeight: 0, overscrollBehavior: 'contain' }}
             onWheel={e => e.stopPropagation()}
             onTouchMove={e => e.stopPropagation()}
           >
