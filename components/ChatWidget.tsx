@@ -393,13 +393,11 @@ export default function ChatWidget() {
       {/* CHAT WINDOW */}
       {open && (
         <div
-          className="fixed z-50 flex flex-col overflow-hidden transition-all duration-300
+          className={`fixed z-50 flex flex-col overflow-hidden transition-all duration-300
             bottom-0 right-0 left-0 top-0 rounded-none
-            sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[360px] sm:rounded-2xl sm:max-w-[calc(100vw-2rem)]"
+            sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[360px] sm:rounded-2xl sm:max-w-[calc(100vw-2rem)] sm:h-[520px]
+            ${minimized ? 'h-0 opacity-0 pointer-events-none' : 'h-[100dvh] opacity-100'}`}
           style={{
-            height: minimized ? '0px' : undefined,
-            opacity: minimized ? 0 : 1,
-            pointerEvents: minimized ? 'none' : 'auto',
             border: '1px solid rgba(21,128,61,0.2)',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
           }}
