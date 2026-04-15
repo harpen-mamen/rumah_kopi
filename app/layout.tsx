@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ChatWidget from "@/components/ChatWidget";
 import { Inter, Plus_Jakarta_Sans, Great_Vibes, Playfair_Display } from "next/font/google";
 
 const greatVibes = Great_Vibes({
@@ -78,6 +79,7 @@ export default function RootLayout({
         className={`${plusJakarta.variable} ${inter.variable} ${greatVibes.variable} ${playfair.variable} antialiased`}
       >
         {children}
+        <ChatWidget />
       </body>
     </html>
   );

@@ -38,14 +38,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, message: 'All fields are required.' }, { status: 400 })
   }
 
-  const { error } = await supabase.from('reservations').insert([{ name, email, phone, guests, date, time }])
+  const { error } = await supabase.from('reservations').insert([{
+    name,
+    email,
+    phone,
+    guests: Number(guests),
+    date,
+    time,
+  }])
 
   if (error) {
-    return NextResponse.json({ success: false, message: 'An error occurred. Please try again.' }, { status: 500 })
+    console.error('Supabase insert error:', error)
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 })
   }
 
-  // Email multumire client
-  await sendToClient(email, '☕ Thank you for your reservation — Vibe Caffè', `
+  // Email multumire client (non-blocking — rezervarea e salvată chiar dacă emailul pică)
+  try { await sendToClient(email, '☕ Thank you for your reservation — Vibe Caffè', `
     <div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f9fafb;border-radius:12px;">
       <h2 style="color:#111827;margin-bottom:4px;">Thank you, ${name}! ☕</h2>
       <p style="color:#374151;margin-bottom:20px;">We've received your reservation request at <strong>Vibe Caffè</strong>. We're reviewing it and you'll receive a confirmation email shortly.</p>
@@ -57,10 +65,10 @@ export async function POST(req: NextRequest) {
       <p style="color:#374151;">If you need to make any changes, please call us at <strong>+44 1908 000 000</strong>.</p>
       <p style="color:#374151;margin-top:24px;">See you soon,<br/><strong>Vibe Caffè Team</strong> ☕</p>
     </div>
-  `)
+  `) } catch { /* email eșuat — rezervarea e salvată */ }
 
   // Email notificare admin
-  await resend.emails.send({
+  try { await resend.emails.send({
     from: FROM,
     to: ADMIN_EMAIL,
     subject: `🆕 New reservation — ${name}`,
@@ -79,7 +87,7 @@ export async function POST(req: NextRequest) {
         <a href="https://vibecaffe-mk.vercel.app/admin" style="display:inline-block;margin-top:20px;padding:12px 24px;background:#0D9488;color:white;border-radius:8px;text-decoration:none;font-weight:600;">Open Admin Panel</a>
       </div>
     `,
-  })
+  }) } catch { /* email admin eșuat — rezervarea e salvată */ }
 
   return NextResponse.json({ success: true, message: 'Reservation received!' })
 }
