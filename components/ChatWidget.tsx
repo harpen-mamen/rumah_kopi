@@ -560,8 +560,8 @@ export default function ChatWidget() {
               onKeyDown={handleKey}
               placeholder={lang === 'ro' ? 'Scrie un mesaj...' : lang === 'fr' ? 'Écrire un message...' : lang === 'de' ? 'Nachricht schreiben...' : lang === 'es' ? 'Escribe un mensaje...' : 'Type a message...'}
               disabled={loading}
-              className="flex-1 min-w-0 px-3 py-2 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
-              style={{ background: '#f9fafb', border: '1px solid #e5e7eb' }}
+              className="flex-1 min-w-0 px-3 py-2 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:opacity-50"
+              style={{ background: '#f9fafb', border: '1px solid #e5e7eb', fontSize: '16px' }}
             />
             <button
               onClick={() => send()}
