@@ -7,6 +7,7 @@ type Message = {
   role: 'user' | 'assistant';
   content: string;
   showReserveButton?: boolean;
+  contextualReplies?: { label: string; text: string }[];
 };
 
 const LANGUAGES = [
@@ -31,56 +32,156 @@ const WELCOME_BY_LANG: Record<string, string> = {
   uk: "Привіт! ☕ Я Cleo, ваш віртуальний бариста. Можу допомогти з усім — меню, ціни, бронювання або рекомендації. Що бажаєте?",
 };
 
+// Initial quick replies shown when chat opens
 const QUICK_REPLIES_BY_LANG: Record<string, { label: string; text: string }[]> = {
   en: [
-    { label: '☕ Recommend a coffee', text: 'What coffee do you recommend?' },
-    { label: '🌱 Vegan options', text: 'Do you have vegan options?' },
-    { label: '📅 Reservation', text: 'How do I make a reservation?' },
+    { label: '📋 See menu', text: 'Show me the menu' },
+    { label: '⭐ Recommendations', text: 'What do you recommend?' },
+    { label: '📅 Reservations', text: 'I want to make a reservation' },
     { label: '⏰ Opening hours', text: 'What are your opening hours?' },
   ],
   ro: [
-    { label: '☕ Recomandă o cafea', text: 'Ce cafea recomandați?' },
-    { label: '🌱 Opțiuni vegan', text: 'Aveți opțiuni vegane?' },
-    { label: '📅 Rezervare', text: 'Cum fac o rezervare?' },
+    { label: '📋 Vezi meniu', text: 'Arată-mi meniul' },
+    { label: '⭐ Recomandări', text: 'Ce recomandați?' },
+    { label: '📅 Rezervări', text: 'Vreau să fac o rezervare' },
     { label: '⏰ Program', text: 'Care este programul?' },
   ],
   fr: [
-    { label: '☕ Recommander un café', text: 'Quel café recommandez-vous?' },
-    { label: '🌱 Options véganes', text: 'Avez-vous des options véganes?' },
-    { label: '📅 Réservation', text: 'Comment faire une réservation?' },
+    { label: '📋 Voir menu', text: 'Montrez-moi le menu' },
+    { label: '⭐ Recommandations', text: 'Que recommandez-vous?' },
+    { label: '📅 Réservations', text: 'Je veux faire une réservation' },
     { label: '⏰ Horaires', text: 'Quels sont vos horaires?' },
   ],
   de: [
-    { label: '☕ Kaffee empfehlen', text: 'Welchen Kaffee empfehlen Sie?' },
-    { label: '🌱 Vegane Optionen', text: 'Haben Sie vegane Optionen?' },
-    { label: '📅 Reservierung', text: 'Wie kann ich reservieren?' },
+    { label: '📋 Menü ansehen', text: 'Zeig mir die Speisekarte' },
+    { label: '⭐ Empfehlungen', text: 'Was empfehlen Sie?' },
+    { label: '📅 Reservierungen', text: 'Ich möchte reservieren' },
     { label: '⏰ Öffnungszeiten', text: 'Was sind Ihre Öffnungszeiten?' },
   ],
   es: [
-    { label: '☕ Recomendar café', text: '¿Qué café recomiendan?' },
-    { label: '🌱 Opciones veganas', text: '¿Tienen opciones veganas?' },
-    { label: '📅 Reserva', text: '¿Cómo hago una reserva?' },
+    { label: '📋 Ver menú', text: 'Muéstrame el menú' },
+    { label: '⭐ Recomendaciones', text: '¿Qué recomiendan?' },
+    { label: '📅 Reservas', text: 'Quiero hacer una reserva' },
     { label: '⏰ Horario', text: '¿Cuál es su horario?' },
   ],
   it: [
-    { label: '☕ Consiglia un caffè', text: 'Quale caffè consigliate?' },
-    { label: '🌱 Opzioni vegane', text: 'Avete opzioni vegane?' },
-    { label: '📅 Prenotazione', text: 'Come faccio una prenotazione?' },
+    { label: '📋 Vedi menu', text: 'Mostrami il menu' },
+    { label: '⭐ Consigli', text: 'Cosa consigliate?' },
+    { label: '📅 Prenotazioni', text: 'Voglio fare una prenotazione' },
     { label: '⏰ Orari', text: 'Quali sono gli orari?' },
   ],
   pl: [
-    { label: '☕ Polecaj kawę', text: 'Jaką kawę polecacie?' },
-    { label: '🌱 Opcje wegańskie', text: 'Czy macie opcje wegańskie?' },
-    { label: '📅 Rezerwacja', text: 'Jak zrobić rezerwację?' },
+    { label: '📋 Zobacz menu', text: 'Pokaż mi menu' },
+    { label: '⭐ Rekomendacje', text: 'Co polecacie?' },
+    { label: '📅 Rezerwacje', text: 'Chcę zarezerwować stolik' },
     { label: '⏰ Godziny otwarcia', text: 'Jakie są godziny otwarcia?' },
   ],
   uk: [
-    { label: '☕ Порекомендуй каву', text: 'Яку каву рекомендуєте?' },
-    { label: '🌱 Веганські опції', text: 'Чи є у вас веганські варіанти?' },
-    { label: '📅 Бронювання', text: 'Як зробити бронювання?' },
+    { label: '📋 Переглянути меню', text: 'Покажи мені меню' },
+    { label: '⭐ Рекомендації', text: 'Що рекомендуєте?' },
+    { label: '📅 Бронювання', text: 'Хочу забронювати столик' },
     { label: '⏰ Години роботи', text: 'Які у вас години роботи?' },
   ],
 };
+
+// Contextual replies shown after certain assistant responses
+const CONTEXTUAL_REPLIES: Record<string, Record<string, { label: string; text: string }[]>> = {
+  menu: {
+    en: [
+      { label: '🌱 Vegan options', text: 'What vegan options do you have?' },
+      { label: '🍰 Desserts', text: 'What desserts do you have?' },
+      { label: '🧊 Cold brew', text: 'Tell me about cold brew options' },
+    ],
+    ro: [
+      { label: '🌱 Opțiuni vegane', text: 'Ce opțiuni vegane aveți?' },
+      { label: '🍰 Deserturi', text: 'Ce deserturi aveți?' },
+      { label: '🧊 Cafea rece', text: 'Spune-mi despre cold brew' },
+    ],
+    fr: [
+      { label: '🌱 Options véganes', text: 'Quelles options véganes avez-vous?' },
+      { label: '🍰 Desserts', text: 'Quels desserts avez-vous?' },
+      { label: '🧊 Cold brew', text: 'Parlez-moi du cold brew' },
+    ],
+    de: [
+      { label: '🌱 Vegane Optionen', text: 'Welche veganen Optionen haben Sie?' },
+      { label: '🍰 Desserts', text: 'Welche Desserts haben Sie?' },
+      { label: '🧊 Cold Brew', text: 'Erzähl mir über Cold Brew' },
+    ],
+    es: [
+      { label: '🌱 Opciones veganas', text: '¿Qué opciones veganas tienen?' },
+      { label: '🍰 Postres', text: '¿Qué postres tienen?' },
+      { label: '🧊 Cold brew', text: 'Cuéntame sobre el cold brew' },
+    ],
+    it: [
+      { label: '🌱 Opzioni vegane', text: 'Quali opzioni vegane avete?' },
+      { label: '🍰 Dolci', text: 'Quali dolci avete?' },
+      { label: '🧊 Cold brew', text: 'Parlami del cold brew' },
+    ],
+    pl: [
+      { label: '🌱 Opcje wegańskie', text: 'Jakie macie opcje wegańskie?' },
+      { label: '🍰 Desery', text: 'Jakie macie desery?' },
+      { label: '🧊 Cold brew', text: 'Opowiedz mi o cold brew' },
+    ],
+    uk: [
+      { label: '🌱 Веганські варіанти', text: 'Які є веганські варіанти?' },
+      { label: '🍰 Десерти', text: 'Які є десерти?' },
+      { label: '🧊 Cold brew', text: 'Розкажи про cold brew' },
+    ],
+  },
+  reservation: {
+    en: [
+      { label: '📅 Make a reservation', text: 'I want to book a table' },
+      { label: '⏰ Opening hours', text: 'What are your opening hours?' },
+    ],
+    ro: [
+      { label: '📅 Fă o rezervare', text: 'Vreau să rezerv o masă' },
+      { label: '⏰ Program', text: 'Care este programul?' },
+    ],
+    fr: [
+      { label: '📅 Faire une réservation', text: 'Je veux réserver une table' },
+      { label: '⏰ Horaires', text: 'Quels sont vos horaires?' },
+    ],
+    de: [
+      { label: '📅 Reservierung machen', text: 'Ich möchte einen Tisch reservieren' },
+      { label: '⏰ Öffnungszeiten', text: 'Was sind Ihre Öffnungszeiten?' },
+    ],
+    es: [
+      { label: '📅 Hacer reserva', text: 'Quiero reservar una mesa' },
+      { label: '⏰ Horario', text: '¿Cuál es su horario?' },
+    ],
+    it: [
+      { label: '📅 Fare prenotazione', text: 'Voglio prenotare un tavolo' },
+      { label: '⏰ Orari', text: 'Quali sono gli orari?' },
+    ],
+    pl: [
+      { label: '📅 Zrób rezerwację', text: 'Chcę zarezerwować stolik' },
+      { label: '⏰ Godziny otwarcia', text: 'Jakie są godziny otwarcia?' },
+    ],
+    uk: [
+      { label: '📅 Забронювати столик', text: 'Хочу забронювати столик' },
+      { label: '⏰ Години роботи', text: 'Які у вас години роботи?' },
+    ],
+  },
+};
+
+function getContextualReplies(replyText: string, lang: string): { label: string; text: string }[] | null {
+  const lower = replyText.toLowerCase();
+  const isMenuContext = lower.includes('menu') || lower.includes('espresso') || lower.includes('latte')
+    || lower.includes('cappuccino') || lower.includes('cold brew') || lower.includes('pastry')
+    || lower.includes('croissant') || lower.includes('meniu') || lower.includes('cafea')
+    || lower.includes('prețuri') || lower.includes('price') || lower.includes('£');
+  const isReservationContext = lower.includes('reserv') || lower.includes('rezerv')
+    || lower.includes('book') || lower.includes('table') || lower.includes('masa')
+    || lower.includes('prenotar') || lower.includes('réserv') || lower.includes('reservier');
+
+  if (isReservationContext) {
+    return (CONTEXTUAL_REPLIES.reservation[lang] || CONTEXTUAL_REPLIES.reservation['en']);
+  }
+  if (isMenuContext) {
+    return (CONTEXTUAL_REPLIES.menu[lang] || CONTEXTUAL_REPLIES.menu['en']);
+  }
+  return null;
+}
 
 const STORAGE_KEY = 'vibe_chat_messages';
 const LANG_KEY = 'vibe_chat_lang';
@@ -146,11 +247,12 @@ export default function ChatWidget() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newWelcome));
   }
 
-  async function send(text?: string) {
+  async function send(text?: string, isQuickReply = false) {
     const textToSend = (text ?? input).trim();
     if (!textToSend || loading) return;
     setInput('');
-    setShowQuickReplies(false);
+    // Hide quick replies only when user types manually; keep them available for quick reply chains
+    if (!isQuickReply) setShowQuickReplies(false);
     setLangOpen(false);
 
     // Injectează instrucțiunea de limbă DOAR dacă userul a ales manual
@@ -204,7 +306,16 @@ export default function ChatWidget() {
         }
       } else {
         const showReserve = data.reply?.toLowerCase().includes('reserv') || data.reply?.toLowerCase().includes('rezerv');
-        setMessages(prev => [...prev, { role: 'assistant', content: data.reply, showReserveButton: showReserve }]);
+        const activeLang = (!manualLang && data.detectedLang && LANGUAGES.find(l => l.code === data.detectedLang))
+          ? data.detectedLang
+          : lang;
+        const contextReplies = getContextualReplies(data.reply || '', activeLang);
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: data.reply,
+          showReserveButton: showReserve,
+          contextualReplies: contextReplies ?? undefined,
+        }]);
         // Auto-detectare limbă — actualizează selectorul DOAR dacă nu e ales manual
         if (!manualLang && data.detectedLang && LANGUAGES.find(l => l.code === data.detectedLang) && data.detectedLang !== lang) {
           setLang(data.detectedLang);
@@ -215,6 +326,8 @@ export default function ChatWidget() {
       setMessages(prev => [...prev, { role: 'assistant', content: "Ups, ceva nu a mers. 😅 Încearcă din nou!" }]);
     }
     setLoading(false);
+    // Restore so contextual replies on the new message are visible (unless user typed manually)
+    if (isQuickReply) setShowQuickReplies(true);
   }
 
   function handleKey(e: React.KeyboardEvent) {
@@ -326,38 +439,53 @@ export default function ChatWidget() {
 
           {/* MESSAGES */}
           <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 bg-white">
-            {messages.map((m, i) => (
-              <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-                <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
-                  {m.role === 'assistant' && (
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mr-2 mt-0.5"
-                      style={{ background: 'rgba(249,115,22,0.1)' }}>☕</div>
-                  )}
-                  <div
-                    className="max-w-[78%] px-3 py-2 rounded-2xl text-sm leading-relaxed"
-                    style={m.role === 'user'
-                      ? { background: '#F97316', color: 'white', borderBottomRightRadius: '4px' }
-                      : { background: '#f9fafb', color: '#111827', borderBottomLeftRadius: '4px', border: '1px solid #f3f4f6' }}
-                  >
-                    {m.content}
+            {messages.map((m, i) => {
+              const isLastAssistant = m.role === 'assistant' && i === messages.length - 1 && !loading;
+              return (
+                <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+                  <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
+                    {m.role === 'assistant' && (
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mr-2 mt-0.5"
+                        style={{ background: 'rgba(249,115,22,0.1)' }}>☕</div>
+                    )}
+                    <div
+                      className="max-w-[78%] px-3 py-2 rounded-2xl text-sm leading-relaxed"
+                      style={m.role === 'user'
+                        ? { background: '#F97316', color: 'white', borderBottomRightRadius: '4px' }
+                        : { background: '#f9fafb', color: '#111827', borderBottomLeftRadius: '4px', border: '1px solid #f3f4f6' }}
+                    >
+                      {m.content}
+                    </div>
                   </div>
+                  {m.role === 'assistant' && m.showReserveButton && (
+                    <button
+                      onClick={() => { router.push('/reservations'); setOpen(false); }}
+                      className="ml-9 mt-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-white transition-all active:scale-95"
+                      style={{ background: '#F97316' }}
+                    >
+                      📅 {lang === 'ro' ? 'Rezervă acum' : lang === 'fr' ? 'Réserver' : lang === 'de' ? 'Reservieren' : lang === 'es' ? 'Reservar' : 'Book now'} →
+                    </button>
+                  )}
+                  {/* Contextual quick replies — only on last assistant message, disappear when showQuickReplies is false */}
+                  {isLastAssistant && showQuickReplies && m.contextualReplies && m.contextualReplies.length > 0 && (
+                    <div className="ml-9 mt-2 flex flex-wrap gap-2">
+                      {m.contextualReplies.map(q => (
+                        <button key={q.text} onClick={() => send(q.text, true)}
+                          className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-orange-300 hover:text-orange-600 active:scale-95"
+                          style={{ background: 'white', borderColor: '#e5e7eb', color: '#374151' }}>
+                          {q.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {m.role === 'assistant' && m.showReserveButton && (
-                  <button
-                    onClick={() => { router.push('/reservations'); setOpen(false); }}
-                    className="ml-9 mt-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-white transition-all active:scale-95"
-                    style={{ background: '#F97316' }}
-                  >
-                    📅 {lang === 'ro' ? 'Rezervă acum' : lang === 'fr' ? 'Réserver' : lang === 'de' ? 'Reservieren' : lang === 'es' ? 'Reservar' : 'Book now'} →
-                  </button>
-                )}
-              </div>
-            ))}
+              );
+            })}
 
             {showQuickReplies && messages.length === 1 && (
               <div className="flex flex-wrap gap-2 mt-1">
                 {quickReplies.map(q => (
-                  <button key={q.text} onClick={() => send(q.text)}
+                  <button key={q.text} onClick={() => send(q.text, true)}
                     className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-orange-300 hover:text-orange-600 active:scale-95"
                     style={{ background: 'white', borderColor: '#e5e7eb', color: '#374151' }}>
                     {q.label}
