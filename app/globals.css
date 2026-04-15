@@ -12,13 +12,13 @@
 
 :root {
   /* Culori principale */
-  --primary: #14B8A6;
-  --primary-dark: #0D9488;
-  --secondary: #F97316;
-  --secondary-dark: #EA580C;
+  --primary: #15803D;
+  --primary-dark: #166534;
+  --secondary: #CA8A04;
+  --secondary-dark: #A16207;
 
   /* Background & Text - Light Mode */
-  --background: #FAFAFA;
+  --background: #F0FDF4;
   --foreground: #1F2937;
 
   /* Glassmorphism */
@@ -68,7 +68,7 @@
 
 /* 📝 TIPOGRAFIE MODERNĂ */
 body {
-  background: linear-gradient(135deg, #FAFAFA 0%, #E0F2FE 100%);
+  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
   font-size: 18px;
