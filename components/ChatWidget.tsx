@@ -399,10 +399,11 @@ export default function ChatWidget() {
           className={`fixed z-50 flex flex-col overflow-hidden transition-all duration-300
             bottom-0 right-0 left-0 top-0 w-screen max-w-full rounded-none
             sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[360px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:h-[520px]
-            ${minimized ? 'h-0 opacity-0 pointer-events-none' : 'h-[100dvh] opacity-100'}`}
+            ${minimized ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           style={{
             border: '1px solid rgba(249,115,22,0.2)',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+            height: minimized ? '0px' : undefined,
           }}
         >
           {/* HEADER */}
@@ -530,7 +531,9 @@ export default function ChatWidget() {
           </div>
 
           {/* INPUT */}
-          <div className="px-3 py-3 bg-white border-t border-gray-100 flex gap-2 shrink-0 min-w-0 overflow-hidden">
+          <div className="px-3 py-3 bg-white border-t border-gray-100 flex gap-2 shrink-0 min-w-0 overflow-hidden"
+            style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+          >
             <input
               ref={inputRef}
               type="text"
