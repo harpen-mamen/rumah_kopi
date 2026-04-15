@@ -183,7 +183,6 @@ function getContextualReplies(replyText: string, lang: string): { label: string;
   return null;
 }
 
-const STORAGE_KEY = 'vibe_chat_messages';
 const LANG_KEY = 'vibe_chat_lang';
 
 export default function ChatWidget() {
@@ -197,13 +196,7 @@ export default function ChatWidget() {
     if (typeof window === 'undefined') return 'en';
     return localStorage.getItem(LANG_KEY) || 'en';
   });
-  const [messages, setMessages] = useState<Message[]>(() => {
-    if (typeof window === 'undefined') return [{ role: 'assistant', content: WELCOME_BY_LANG['en'] }];
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [{ role: 'assistant', content: WELCOME_BY_LANG['en'] }];
-    } catch { return [{ role: 'assistant', content: WELCOME_BY_LANG['en'] }]; }
-  });
+  const [messages, setMessages] = useState<Message[]>([{ role: 'assistant', content: WELCOME_BY_LANG['en'] }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
@@ -211,11 +204,6 @@ export default function ChatWidget() {
   const inputRef = useRef<HTMLInputElement>(null);
   const badgeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    }
-  }, [messages]);
 
   useEffect(() => {
     if (!open) {
@@ -241,10 +229,8 @@ export default function ChatWidget() {
     localStorage.setItem(LANG_KEY, newLang);
     setLangOpen(false);
     // Reset chat cu welcome în noua limbă
-    const newWelcome = [{ role: 'assistant' as const, content: WELCOME_BY_LANG[newLang] || WELCOME_BY_LANG['en'] }];
-    setMessages(newWelcome);
+    setMessages([{ role: 'assistant' as const, content: WELCOME_BY_LANG[newLang] || WELCOME_BY_LANG['en'] }]);
     setShowQuickReplies(true);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newWelcome));
   }
 
   async function send(text?: string, isQuickReply = false) {
@@ -344,7 +330,6 @@ export default function ChatWidget() {
     const welcome = [{ role: 'assistant' as const, content: WELCOME_BY_LANG[lang] || WELCOME_BY_LANG['en'] }];
     setMessages(welcome);
     setShowQuickReplies(true);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(welcome));
   }
 
   const currentLang = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
