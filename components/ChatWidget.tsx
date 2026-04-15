@@ -3,6 +3,31 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+function renderWithLinks(text: string) {
+  const parts = text.split(/(\[([^\]]+)\]\(([^)]+)\))/g);
+  const result: React.ReactNode[] = [];
+  let i = 0;
+  while (i < parts.length) {
+    if (/^\[([^\]]+)\]\(([^)]+)\)$/.test(parts[i])) {
+      const match = parts[i].match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (match) {
+        result.push(
+          <a key={i} href={match[2]}
+            className="underline font-semibold hover:opacity-80 transition-opacity"
+            style={{ color: '#F97316' }}
+            onClick={e => { e.preventDefault(); window.location.href = match[2]; }}
+          >{match[1]}</a>
+        );
+        i++;
+        continue;
+      }
+    }
+    if (parts[i]) result.push(parts[i]);
+    i++;
+  }
+  return result;
+}
+
 type Message = {
   role: 'user' | 'assistant';
   content: string;
@@ -439,7 +464,7 @@ export default function ChatWidget() {
                         ? { background: '#F97316', color: 'white', borderBottomRightRadius: '4px' }
                         : { background: '#f9fafb', color: '#111827', borderBottomLeftRadius: '4px', border: '1px solid #f3f4f6' }}
                     >
-                      {m.content}
+                      {m.role === 'assistant' ? renderWithLinks(m.content) : m.content}
                     </div>
                   </div>
                   {m.role === 'assistant' && m.showReserveButton && (
