@@ -409,14 +409,16 @@ export default function ChatWidget() {
       {open && (
         <div
           className={`fixed z-50 flex flex-col overflow-hidden
-            left-0 right-0 bottom-0 w-screen max-w-full rounded-none
-            sm:bottom-24 sm:right-6 sm:left-auto sm:w-[360px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:h-[520px]
+            left-0 right-0 w-screen max-w-full rounded-none
+            sm:top-auto sm:bottom-24 sm:right-6 sm:left-auto sm:w-[360px] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:h-[520px]
             ${minimized ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           style={{
             border: '1px solid rgba(249,115,22,0.2)',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-            height: minimized ? '0px' : (viewportHeight ? `${viewportHeight}px` : '100dvh'),
-            top: 'auto',
+            ...(minimized ? { height: '0px' } : {
+              top: 0,
+              height: viewportHeight ? `${viewportHeight}px` : '100dvh',
+            }),
           }}
         >
           {/* HEADER */}
