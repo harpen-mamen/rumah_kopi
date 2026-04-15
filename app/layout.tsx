@@ -76,7 +76,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${plusJakarta.variable} ${inter.variable} ${greatVibes.variable} ${playfair.variable} antialiased`}
+        className={`${plusJakarta.variable} ${inter.variable} ${greatVibes.variable} ${playfair.variable} antialiased overflow-x-hidden`}
       >
         {children}
         <ChatWidget />
