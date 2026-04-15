@@ -30,6 +30,7 @@ Reguli stricte:
 export async function POST(req: NextRequest) {
   const { messages } = await req.json()
 
+  // Keep last 10 messages; skip the initial assistant welcome (index 0) since context is in system prompt
   const history = messages
     .slice(1)
     .slice(-10)
@@ -38,8 +39,10 @@ export async function POST(req: NextRequest) {
       content: m.content,
     }))
 
-  if (history.length === 0) {
-    history.push({ role: 'user', content: messages[messages.length - 1].content })
+  // Ensure history always ends with a user message
+  if (history.length === 0 || history[history.length - 1].role !== 'user') {
+    const lastUser = [...messages].reverse().find((m: { role: string }) => m.role === 'user')
+    if (lastUser) history.push({ role: 'user' as const, content: lastUser.content })
   }
 
   const response = await anthropic.messages.create({

@@ -3,28 +3,27 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-function renderWithLinks(text: string) {
-  const parts = text.split(/(\[([^\]]+)\]\(([^)]+)\))/g);
+const LINK_REGEX = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+function renderWithLinks(text: string): React.ReactNode[] {
   const result: React.ReactNode[] = [];
-  let i = 0;
-  while (i < parts.length) {
-    if (/^\[([^\]]+)\]\(([^)]+)\)$/.test(parts[i])) {
-      const match = parts[i].match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-      if (match) {
-        result.push(
-          <a key={i} href={match[2]}
-            className="underline font-semibold hover:opacity-80 transition-opacity"
-            style={{ color: '#15803D' }}
-            onClick={e => { e.preventDefault(); window.location.href = match[2]; }}
-          >{match[1]}</a>
-        );
-        i++;
-        continue;
-      }
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  LINK_REGEX.lastIndex = 0;
+  while ((match = LINK_REGEX.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      result.push(text.slice(lastIndex, match.index));
     }
-    if (parts[i]) result.push(parts[i]);
-    i++;
+    result.push(
+      <a key={match.index} href={match[2]}
+        className="underline font-semibold hover:opacity-80 transition-opacity"
+        style={{ color: '#15803D' }}
+        onClick={e => { e.preventDefault(); window.location.href = match![2]; }}
+      >{match[1]}</a>
+    );
+    lastIndex = match.index + match[0].length;
   }
+  if (lastIndex < text.length) result.push(text.slice(lastIndex));
   return result;
 }
 
@@ -221,7 +220,10 @@ export default function ChatWidget() {
     if (typeof window === 'undefined') return 'en';
     return localStorage.getItem(LANG_KEY) || 'en';
   });
-  const [messages, setMessages] = useState<Message[]>([{ role: 'assistant', content: WELCOME_BY_LANG['en'] }]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const savedLang = typeof window !== 'undefined' ? (localStorage.getItem(LANG_KEY) || 'en') : 'en';
+    return [{ role: 'assistant', content: WELCOME_BY_LANG[savedLang] || WELCOME_BY_LANG['en'] }];
+  });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
