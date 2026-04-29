@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
 
   const text = response.content[0].type === 'text'
     ? response.content[0].text
-    : 'Hmm, ceva n-a mers. 😅 Încearcă din nou!'
+    : "Hmm, something went sideways there. 😅 Try again!"
 
   // Detectează dacă AI a returnat JSON de booking
   try {

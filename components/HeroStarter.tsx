@@ -58,7 +58,7 @@ export default function HeroStarter() {
       }} />
 
       {/* CONTINUT - aliniat cu navbar */}
-      <div className="relative z-10 w-full pl-8 md:pl-16 lg:pl-24 pr-6 text-left text-white">
+      <div className="relative z-10 w-full px-6 md:pl-16 lg:pl-24 md:pr-6 text-left text-white">
 
         {/* BLOC TEXT — lățime limitată */}
         <div className="max-w-2xl">
@@ -66,7 +66,7 @@ export default function HeroStarter() {
           {/* DESCRIPTOR */}
           <div className="hero-animate hero-delay-1 mb-2">
             <span className="handwrite text-2xl sm:text-4xl" style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}>
-              Welcome to the place
+              Welcome to your favourite place
             </span>
           </div>
 
@@ -80,15 +80,15 @@ export default function HeroStarter() {
               fontSize: 'clamp(1.6rem, 6vw, 3.5rem)',
             }}
           >
-            Where coffee brings people together
+            Coffee. Community. Connection.
           </h1>
 
           {/* SUBTITLU */}
           <p
-            className="hero-animate hero-delay-3 text-sm mt-4 mb-10 font-medium tracking-widest uppercase"
+            className="hero-animate hero-delay-3 text-xs sm:text-sm mt-4 mb-8 font-medium tracking-wider sm:tracking-widest uppercase"
             style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}
           >
-            Fresh roasts · Expert baristas · Home away from home
+            Freshly roasted · Crafted with care · Always a warm welcome
           </p>
 
           {/* BUTOANE CTA */}
@@ -96,27 +96,29 @@ export default function HeroStarter() {
             {/* PRIMARY CTA */}
             <button
               onClick={() => scrollToSection('menu')}
-              className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/40 text-center"
+              className="px-8 py-3 sm:py-4 bg-amber-500 hover:bg-amber-400 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/40 text-center text-sm sm:text-base"
             >
-              Discover Our Drinks
+              See Our Menu
             </button>
-            {/* SECONDARY */}
-            <a
-              href="https://instagram.com/vibecaffe"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full border-2 border-white/60 hover:border-white transition-all duration-300 backdrop-blur-sm text-center"
-            >
-              Follow Us
-            </a>
-            <a
-              href="https://www.google.com/maps/search/Vibe+Caffe+Milton+Keynes"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full border-2 border-white/60 hover:border-white transition-all duration-300 backdrop-blur-sm text-center"
-            >
-              Leave a Review
-            </a>
+            {/* SECONDARY — row pe mobile */}
+            <div className="flex flex-row sm:flex-row gap-3">
+              <a
+                href="https://instagram.com/vibecaffe"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 sm:flex-none px-5 sm:px-8 py-3 sm:py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full border-2 border-white/60 hover:border-white transition-all duration-300 backdrop-blur-sm text-center text-sm sm:text-base"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://www.google.com/maps/search/Vibe+Caffe+Milton+Keynes"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 sm:flex-none px-5 sm:px-8 py-3 sm:py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full border-2 border-white/60 hover:border-white transition-all duration-300 backdrop-blur-sm text-center text-sm sm:text-base"
+              >
+                Leave a Review
+              </a>
+            </div>
           </div>
 
         </div>

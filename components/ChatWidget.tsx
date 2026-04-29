@@ -49,23 +49,23 @@ const LANGUAGES = [
 ];
 
 const WELCOME_BY_LANG: Record<string, string> = {
-  en: "Hey! ☕ I'm Cleo, your virtual barista. I can help with anything — menu, prices, reservations or recommendations. What can I get you?",
-  ro: "Bună! ☕ Sunt Cleo, barista tău virtual. Te pot ajuta cu orice — meniu, prețuri, rezervări sau recomandări. Ce dorești?",
-  fr: "Bonjour! ☕ Je suis Cleo, votre barista virtuel. Je peux vous aider avec tout — menu, prix, réservations ou recommandations. Que puis-je faire pour vous?",
-  de: "Hallo! ☕ Ich bin Cleo, dein virtueller Barista. Ich helfe dir gerne weiter — Menü, Preise, Reservierungen oder Empfehlungen. Was darf es sein?",
-  es: "¡Hola! ☕ Soy Cleo, tu barista virtual. Puedo ayudarte con todo — menú, precios, reservas o recomendaciones. ¿Qué necesitas?",
-  it: "Ciao! ☕ Sono Cleo, il tuo barista virtuale. Posso aiutarti con qualsiasi cosa — menu, prezzi, prenotazioni o consigli. Cosa desideri?",
-  pl: "Cześć! ☕ Jestem Cleo, twój wirtualny barista. Mogę pomóc ze wszystkim — menu, ceny, rezerwacje lub rekomendacje. Czego potrzebujesz?",
-  uk: "Привіт! ☕ Я Cleo, ваш віртуальний бариста. Можу допомогти з усім — меню, ціни, бронювання або рекомендації. Що бажаєте?",
+  en: "Hey, welcome in! ☕ I'm Cleo — think of me as your barista on standby. What can I help you with today?",
+  ro: "Bună, bine ai venit! ☕ Sunt Cleo — barista tău de serviciu. Cu ce te pot ajuta azi?",
+  fr: "Bonjour et bienvenue! ☕ Je suis Cleo, votre barista à disposition. Comment puis-je vous aider aujourd'hui?",
+  de: "Hey, herzlich willkommen! ☕ Ich bin Cleo — dein Barista auf Abruf. Wie kann ich dir heute helfen?",
+  es: "¡Hola, bienvenido! ☕ Soy Cleo, tu barista de guardia. ¿En qué puedo ayudarte hoy?",
+  it: "Ciao, benvenuto! ☕ Sono Cleo, il tuo barista a disposizione. Come posso aiutarti oggi?",
+  pl: "Hej, witaj! ☕ Jestem Cleo — twój barista na dyżurze. Jak mogę ci dziś pomóc?",
+  uk: "Привіт, ласкаво просимо! ☕ Я Cleo — ваш бариста на зв'язку. Чим можу допомогти сьогодні?",
 };
 
 // Initial quick replies shown when chat opens
 const QUICK_REPLIES_BY_LANG: Record<string, { label: string; text: string }[]> = {
   en: [
-    { label: '📋 See menu', text: 'Show me the menu' },
-    { label: '⭐ Recommendations', text: 'What do you recommend?' },
-    { label: '📅 Reservations', text: 'I want to make a reservation' },
-    { label: '⏰ Opening hours', text: 'What are your opening hours?' },
+    { label: "☕ What's good here?", text: "What do you recommend?" },
+    { label: '📋 See the menu', text: 'Show me the full menu' },
+    { label: '📅 Book a table', text: 'I want to book a table' },
+    { label: '⏰ When are you open?', text: 'What are your opening hours?' },
   ],
   ro: [
     { label: '📋 Vezi meniu', text: 'Arată-mi meniul' },
@@ -115,9 +115,9 @@ const QUICK_REPLIES_BY_LANG: Record<string, { label: string; text: string }[]> =
 const CONTEXTUAL_REPLIES: Record<string, Record<string, { label: string; text: string }[]>> = {
   menu: {
     en: [
-      { label: '🌱 Vegan options', text: 'What vegan options do you have?' },
-      { label: '🍰 Desserts', text: 'What desserts do you have?' },
-      { label: '🧊 Cold brew', text: 'Tell me about cold brew options' },
+      { label: '🌱 Anything vegan?', text: 'What vegan options do you have?' },
+      { label: '🍰 Got any cakes?', text: 'What pastries and desserts do you have?' },
+      { label: '🧊 Cold brew options?', text: 'Tell me about your cold brew' },
     ],
     ro: [
       { label: '🌱 Opțiuni vegane', text: 'Ce opțiuni vegane aveți?' },
@@ -157,8 +157,8 @@ const CONTEXTUAL_REPLIES: Record<string, Record<string, { label: string; text: s
   },
   reservation: {
     en: [
-      { label: '📅 Make a reservation', text: 'I want to book a table' },
-      { label: '⏰ Opening hours', text: 'What are your opening hours?' },
+      { label: '📅 Yes, book me in', text: 'I want to book a table' },
+      { label: '⏰ When are you open?', text: 'What are your opening hours?' },
     ],
     ro: [
       { label: '📅 Fă o rezervare', text: 'Vreau să rezerv o masă' },
@@ -327,14 +327,14 @@ export default function ChatWidget() {
           } else {
             setMessages(prev => [...prev, {
               role: 'assistant',
-              content: "Hmm, rezervarea nu a putut fi salvată. 😅 Încearcă pe pagina de rezervări sau sună-ne la +44 1908 000 000.",
+              content: "Hmm, something went wrong saving your booking. 😅 Try the reservations page or give us a ring at +44 1908 000 000.",
               showReserveButton: true,
             }]);
           }
         } catch {
           setMessages(prev => [...prev, {
             role: 'assistant',
-            content: "Conexiune întreruptă. 😅 Încearcă rezervarea pe site sau sună-ne direct.",
+            content: "Lost the connection there for a second! 😅 Try booking via the page, or call us directly.",
             showReserveButton: true,
           }]);
         }
@@ -357,7 +357,7 @@ export default function ChatWidget() {
         }
       }
     } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Ups, ceva nu a mers. 😅 Încearcă din nou!" }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: "Oops, that didn't go through. 😅 Give it another go!" }]);
     }
     setLoading(false);
     // Restore so contextual replies on the new message are visible (unless user typed manually)

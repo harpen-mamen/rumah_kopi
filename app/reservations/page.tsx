@@ -161,14 +161,14 @@ export default function ReservationsPage() {
         <div className="relative z-10 w-full px-6 md:px-16 lg:px-24 text-white">
           <div className="max-w-2xl">
             <span className="handwrite text-4xl sm:text-5xl block mb-2" style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8)' }}>
-              A table for you
+              Your table awaits
             </span>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight"
               style={{ color: '#FFF8F0', fontFamily: 'var(--font-playfair), Georgia, serif', textShadow: '0 4px 24px rgba(0,0,0,0.6)' }}>
-              Reserve a Table
+              Book a Table
             </h1>
             <p className="text-xs sm:text-sm font-medium tracking-widest uppercase" style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8)' }}>
-              Secure your spot · We'll take care of the rest
+              Pick your time · We'll handle the rest
             </p>
           </div>
         </div>
@@ -227,8 +227,8 @@ export default function ReservationsPage() {
                 {/* STEP 1 — DATE */}
                 {step === 1 && (
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Choose a date</h2>
-                    <p className="text-gray-500 text-sm mb-5">When would you like to visit?</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Pick a date</h2>
+                    <p className="text-gray-500 text-sm mb-5">When are you planning to visit?</p>
 
                     {/* Quick buttons */}
                     <div className="flex gap-2 overflow-x-auto pb-2 mb-5 scrollbar-hide">
@@ -315,7 +315,7 @@ export default function ReservationsPage() {
                 {/* STEP 2 — TIME */}
                 {step === 2 && (
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Choose a time</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Pick a time</h2>
                     <p className="text-gray-500 text-sm mb-5">{formatDate(date)}</p>
 
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-6 max-h-72 overflow-y-auto pr-1">
@@ -428,7 +428,7 @@ export default function ReservationsPage() {
                             </svg>
                             Saving...
                           </>
-                        ) : 'Confirm Reservation'}
+                        ) : 'Confirm Booking'}
                       </button>
                     </div>
 

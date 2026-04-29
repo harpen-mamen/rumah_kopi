@@ -78,11 +78,11 @@ export default function Menu() {
 
         {/* HEADER */}
         <div className="text-center mb-12">
-          <h2 className="text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4">
             Our <span className="text-amber-500">Menu</span>
           </h2>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-            Carefully crafted drinks and freshly baked treats for every taste
+          <p className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto">
+            Crafted drinks and freshly baked treats — something for everyone.
           </p>
         </div>
 

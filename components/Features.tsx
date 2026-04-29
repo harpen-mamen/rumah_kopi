@@ -20,17 +20,17 @@ const cards = [
   {
     image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop',
     title: 'Specialty Coffee',
-    text: 'Every cup starts with carefully sourced, freshly roasted beans — crafted with precision and passion.',
+    text: 'Carefully sourced, freshly roasted — every cup made with precision and passion.',
   },
   {
     image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&auto=format&fit=crop',
     title: 'Artisan Pastry',
-    text: 'Freshly baked every morning — croissants, cakes, and seasonal treats to pair perfectly with your coffee.',
+    text: 'Baked fresh every morning — croissants, cakes, and seasonal treats to complement your coffee.',
   },
   {
     image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&auto=format&fit=crop',
     title: 'Relaxing Ambience',
-    text: 'A cozy space designed for connection — for friends, work, or simply a quiet moment alone.',
+    text: 'Warm and welcoming — perfect for catching up with friends, getting work done, or enjoying a quiet moment.',
   },
 ];
 
@@ -46,11 +46,11 @@ export default function Features() {
 
         {/* HEADER */}
         <div className="text-center mb-10">
-          <h2 className="font-bold text-gray-900 mb-3" style={{ fontSize: 'clamp(1.8rem, 3vw, 2.8rem)' }}>
+          <h2 className="font-bold text-gray-900 mb-3" style={{ fontSize: 'clamp(1.6rem, 5vw, 2.8rem)' }}>
             Why <span className="text-amber-500">Vibe Caffè</span>?
           </h2>
-          <p className="text-gray-500 text-base max-w-xl mx-auto">
-            Unique experience, premium ingredients, perfect atmosphere
+          <p className="text-gray-500 text-sm sm:text-base max-w-xl mx-auto">
+            Premium ingredients. Expert craft. A space you&#39;ll want to return to.
           </p>
         </div>
 

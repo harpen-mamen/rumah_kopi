@@ -35,11 +35,11 @@ export default function Location() {
 
         {/* HEADER */}
         <div className="text-center mb-10">
-          <h2 className="text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4">
             Find <span className="text-amber-500">Us</span>
           </h2>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-            Come in, sit down, and let us make you something wonderful
+          <p className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto">
+            Pop in, take a seat, and let us make you something special.
           </p>
         </div>
 

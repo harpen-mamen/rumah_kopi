@@ -26,11 +26,11 @@ export default function About() {
 
         {/* HEADER */}
         <div className="text-center mb-10">
-          <h2 className="font-bold text-gray-900 mb-3" style={{ fontSize: 'clamp(1.8rem, 3vw, 2.8rem)' }}>
+          <h2 className="font-bold text-gray-900 mb-3" style={{ fontSize: 'clamp(1.6rem, 5vw, 2.8rem)' }}>
             Our <span className="text-amber-600">Story</span>
           </h2>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-            A place born from a love of coffee, community, and craft
+          <p className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto">
+            Born from a passion for coffee, people, and craft
           </p>
         </div>
 
@@ -69,16 +69,16 @@ export default function About() {
               Est. 2019 · Milton Keynes
             </span>
 
-            <p className="text-gray-600 text-lg leading-relaxed">
-              Vibe Caffè started as a simple idea: what if your neighbourhood coffee shop felt less like a transaction and more like coming home? We opened our doors in Milton Keynes with a single espresso machine, a handful of bar stools, and an obsession with getting every cup exactly right.
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
+              Vibe Caffè started with one simple idea: a neighbourhood coffee shop that feels like coming home. We opened in Milton Keynes with a single espresso machine and an obsession with getting every cup exactly right.
             </p>
 
-            <p className="text-gray-600 text-lg leading-relaxed">
-              Every bean we use is sourced directly from small-scale farms — from the volcanic highlands of Ethiopia to the misty hills of Colombia. We roast in small batches to preserve the character of each origin, so that what ends up in your cup is never generic, always memorable.
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
+              Every bean is sourced from small farms — from Ethiopia to Colombia. We roast in small batches so what's in your cup is never generic, always memorable.
             </p>
 
-            <p className="text-gray-600 text-lg leading-relaxed">
-              But Vibe has always been about more than coffee. It's the writer who claims the corner table every morning, the friends who linger long after their cups are empty, the barista who remembers your name by your third visit. We built this place for all of them — and for you.
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
+              But Vibe has always been about more than coffee. It's the morning regulars, the friends who linger, the barista who knows your name. We built this place for all of them — and for you.
             </p>
 
             {/* Stats */}
@@ -89,7 +89,7 @@ export default function About() {
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-amber-500">12</p>
-                <p className="text-sm text-gray-400 mt-1">Origin coffees</p>
+                <p className="text-sm text-gray-400 mt-1">Coffee origins</p>
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-amber-500">∞</p>

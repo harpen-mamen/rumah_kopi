@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
 const navLinks = [
-  { label: 'Discover',  id: 'features' },
+  { label: 'Why Vibe',  id: 'features' },
   { label: 'Menu',      id: 'menu'     },
   { label: 'Our Story', id: 'about'    },
   { label: 'Find Us',   id: 'location' },
@@ -70,7 +70,7 @@ export default function Navigation() {
             href="/reservations"
             className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/30"
           >
-            Reserve a table
+            Book a Table
           </a>
           <a
             href="/admin"
@@ -120,7 +120,7 @@ export default function Navigation() {
             onClick={() => setMenuOpen(false)}
             className="w-full text-center px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold rounded-full transition-colors"
           >
-            Reserve a table
+            Book a Table
           </a>
           <a
             href="/admin"

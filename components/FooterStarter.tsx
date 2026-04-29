@@ -28,7 +28,7 @@ export default function FooterStarter() {
                 <span className="font-bold text-white text-lg">Vibe <span className="text-amber-400">Caffè</span></span>
               </a>
               <p className="text-sm text-gray-400 leading-relaxed mb-4">
-                Specialty coffee in the heart of Milton Keynes. A place to slow down, connect, and savour every sip.
+                Specialty coffee in the heart of Milton Keynes — slow down, connect, and savour every sip.
               </p>
               {/* Social icons */}
               <div className="flex gap-3">
@@ -67,7 +67,7 @@ export default function FooterStarter() {
               <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
               <ul className="flex flex-col gap-2 text-sm">
                 {[
-                  { label: 'Discover', href: '/#features' },
+                  { label: 'Why Vibe', href: '/#features' },
                   { label: 'Menu', href: '/#menu' },
                   { label: 'Our Story', href: '/#about' },
                   { label: 'Find Us', href: '/#location' },
