@@ -1,8 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { KNOWLEDGE_BASE } from '@/lib/knowledge-base'
+import { query, type MenuItemRow } from '@/lib/db'
+import { formatPrice } from '@/lib/public-content'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const anthropic = process.env.ANTHROPIC_API_KEY
+  ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  : null
+
+function formatMenuForPrompt(items: MenuItemRow[]) {
+  if (items.length === 0) return 'Menu database kosong atau belum ada item aktif.'
+
+  const grouped = items.reduce<Record<string, MenuItemRow[]>>((acc, item) => {
+    if (!acc[item.category]) acc[item.category] = []
+    acc[item.category].push(item)
+    return acc
+  }, {})
+
+  return Object.entries(grouped)
+    .map(([category, categoryItems]) => {
+      const rows = categoryItems.map(item => {
+        const description = item.description ? ` | ${item.description}` : ''
+        return `- ${item.name} — ${formatPrice(item.price)}${description}`
+      })
+      return `### ${category}\n${rows.join('\n')}`
+    })
+    .join('\n\n')
+}
+
+async function getLiveMenuPrompt() {
+  try {
+    const items = await query<MenuItemRow>(
+      `select mi.id, mc.name as category, mi.name, mi.description, mi.price, mi.is_available as available
+      from menu_items mi
+      inner join menu_categories mc on mc.id = mi.menu_category_id
+      where mi.is_available = true and mc.is_active = true
+      order by mc.sort_order asc, mi.sort_order asc, mi.id asc`,
+    )
+
+    return `
+
+## MENU DATABASE TERBARU
+Gunakan daftar ini sebagai sumber utama untuk rekomendasi, diskusi menu, harga, dan ketersediaan.
+${formatMenuForPrompt(items)}
+`
+  } catch {
+    return `
+
+## MENU DATABASE TERBARU
+Menu database sedang tidak bisa dibaca. Jika pengguna bertanya menu, jawab jujur dan arahkan ke [Order menu](/order) atau minta staf mengecek dashboard.
+`
+  }
+}
 
 const BOOKING_SYSTEM = `
 ## REZERVARE PRIN CHAT
@@ -45,10 +94,17 @@ export async function POST(req: NextRequest) {
     if (lastUser) history.push({ role: 'user' as const, content: lastUser.content })
   }
 
+  if (!anthropic) {
+    const lastUserMsg = history.filter((m: { role: string }) => m.role === 'user').pop()?.content || ''
+    return NextResponse.json(await fallbackReply(lastUserMsg))
+  }
+
+  const liveMenuPrompt = await getLiveMenuPrompt()
+
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 300,
-    system: KNOWLEDGE_BASE + BOOKING_SYSTEM,
+    max_tokens: 500,
+    system: KNOWLEDGE_BASE + liveMenuPrompt + BOOKING_SYSTEM,
     messages: history,
   })
 
@@ -93,4 +149,70 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ reply: text, detectedLang })
+}
+
+async function fallbackReply(message: string) {
+  const text = message.toLowerCase()
+  const wantsRecommendation = text.includes('rekomend') || text.includes('saran') || text.includes('recommend') || text.includes('suggest') || text.includes('enak') || text.includes('bingung')
+  const wantsCold = text.includes('dingin') || text.includes('cold') || text.includes('ice') || text.includes('iced')
+  const wantsSweet = text.includes('manis') || text.includes('sweet') || text.includes('caramel') || text.includes('dessert')
+  const wantsMilk = text.includes('susu') || text.includes('milk') || text.includes('latte') || text.includes('creamy')
+  const wantsPastry = text.includes('pastry') || text.includes('cake') || text.includes('roti') || text.includes('croissant') || text.includes('dessert')
+
+  if (text.includes('book') || text.includes('booking') || text.includes('reserv') || text.includes('meja')) {
+    return {
+      reply: 'Bisa. Cara paling cepat lewat halaman booking: [Book a table](/reservations). Booking yang masuk akan tampil di dashboard admin.',
+      detectedLang: 'id',
+    }
+  }
+
+  if (text.includes('order') || text.includes('pesan') || text.includes('beli')) {
+    return {
+      reply: 'Bisa pesan menu dari halaman ini: [Order menu](/order). Setelah dikirim, order langsung masuk ke dashboard admin.',
+      detectedLang: 'id',
+    }
+  }
+
+  if (text.includes('menu') || text.includes('coffee') || text.includes('kopi') || text.includes('latte')) {
+    try {
+      const items = await query<MenuItemRow>(
+        `select mi.id, mc.name as category, mi.name, mi.description, mi.price, mi.is_available as available
+        from menu_items mi
+        inner join menu_categories mc on mc.id = mi.menu_category_id
+        where mi.is_available = true and mc.is_active = true
+        order by mc.sort_order asc, mi.sort_order asc, mi.id asc`,
+      )
+      let candidates = items
+
+      if (wantsPastry) candidates = items.filter(item => `${item.category} ${item.name} ${item.description}`.toLowerCase().match(/pastry|cake|croissant|brownie|roll|chocolat/))
+      else if (wantsCold) candidates = items.filter(item => `${item.category} ${item.name} ${item.description}`.toLowerCase().match(/cold|iced|nitro|lemonade|tonic/))
+      else if (wantsSweet) candidates = items.filter(item => `${item.name} ${item.description}`.toLowerCase().match(/caramel|vanilla|honey|lavender|rose|chocolate|brownie|cake|cinnamon/))
+      else if (wantsMilk) candidates = items.filter(item => `${item.name} ${item.description}`.toLowerCase().match(/latte|milk|oat|cappuccino|flat white|cortado/))
+
+      const picked = (candidates.length ? candidates : items).slice(0, wantsRecommendation ? 3 : 6)
+      const menuText = picked.map(item => `${item.name} ${formatPrice(item.price)}`).join(', ')
+
+      if (wantsRecommendation) {
+        return {
+          reply: `Kalau di Cafe Tortuga, aku sarankan ${menuText || 'menu favorit sedang disiapkan'}. Kalau mau aku persempit lagi, kamu lagi pengin yang panas, dingin, manis, atau creamy?`,
+          detectedLang: 'id',
+        }
+      }
+
+      return {
+        reply: `Menu Cafe Tortuga yang tersedia: ${menuText || 'menu sedang disiapkan'}. Lihat lengkapnya di [See full menu](/#menu) atau langsung [Order menu](/order).`,
+        detectedLang: 'id',
+      }
+    } catch {
+      return {
+        reply: 'Menu sedang belum bisa dibaca dari database. Pastikan MySQL XAMPP aktif dan schema sudah diimport.',
+        detectedLang: 'id',
+      }
+    }
+  }
+
+  return {
+    reply: 'Halo, saya Cleo, barista virtual Cafe Tortuga. Ceritakan kamu lagi pengin rasa seperti apa, nanti aku bantu pilihkan menu; atau langsung ke [See menu](/#menu), [Book a table](/reservations), [Order menu](/order).',
+    detectedLang: 'id',
+  }
 }

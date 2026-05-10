@@ -1,6 +1,6 @@
 'use server'
 
-import { supabase } from '@/lib/supabase'
+import { execute, query, type ReservationRow } from '@/lib/db'
 
 export type ReservationData = {
   name: string
@@ -12,24 +12,26 @@ export type ReservationData = {
 }
 
 export async function createReservation(data: ReservationData) {
-  const { error } = await supabase.from('reservations').insert([data])
+  try {
+    await execute(
+      'insert into reservations (name, email, phone, guests, date, time) values (:name, :email, :phone, :guests, :date, :time)',
+      { ...data, guests: Number(data.guests) },
+    )
 
-  if (error) {
+    return { success: true, message: 'Rezervarea ta a fost înregistrată cu succes!' }
+  } catch {
     return { success: false, message: 'A apărut o eroare. Te rugăm să încerci din nou.' }
   }
-
-  return { success: true, message: 'Rezervarea ta a fost înregistrată cu succes!' }
 }
 
 export async function getReservations() {
-  const { data, error } = await supabase
-    .from('reservations')
-    .select('*')
-    .order('created_at', { ascending: false })
+  try {
+    const data = await query<ReservationRow>(
+      'select id, name, email, phone, guests, date, time, status, created_at, updated_at from reservations order by created_at desc',
+    )
 
-  if (error) {
+    return { success: true, data }
+  } catch {
     return { success: false, data: [] }
   }
-
-  return { success: true, data }
 }

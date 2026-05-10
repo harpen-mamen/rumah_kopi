@@ -36,7 +36,7 @@ export default function AdminLogin() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="text-3xl mb-2">☕</div>
-          <h1 className="text-2xl font-bold text-gray-900">Vibe Caffè</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Cafe Tortuga</h1>
           <p className="text-gray-500 text-sm mt-1">Admin Panel</p>
         </div>
 
@@ -84,7 +84,7 @@ export default function AdminLogin() {
         </form>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          Vibe Caffè · Milton Keynes
+          Cafe Tortuga · Milton Keynes
         </p>
       </div>
     </div>

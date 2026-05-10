@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const navItems = [
   {
@@ -23,11 +24,38 @@ const navItems = [
     ),
   },
   {
+    href: '/admin/orders',
+    label: 'Orders',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 7h14M9 20a1 1 0 11-2 0 1 1 0 012 0zm10 0a1 1 0 11-2 0 1 1 0 012 0z" />
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/tables',
+    label: 'Tables & QR',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/menu',
     label: 'Menu & Prices',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/menu/new',
+    label: 'Add Menu',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 5v14m7-7H5" />
       </svg>
     ),
   },
@@ -53,10 +81,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Logo */}
         <div className="px-6 py-5 border-b border-gray-100">
-          <a href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <span className="text-xl">☕</span>
-            <span className="font-bold text-gray-900">Vibe <span className="text-amber-500">Caffè</span></span>
-          </a>
+            <span className="font-bold text-gray-900">Cafe <span className="text-amber-500">Tortuga</span></span>
+          </Link>
           <p className="text-xs text-gray-400 mt-0.5 ml-7">Admin Panel</p>
         </div>
 
@@ -81,13 +109,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Back to site + Logout */}
         <div className="px-3 py-4 border-t border-gray-100 flex flex-col gap-1">
-          <a href="/"
+          <Link href="/"
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Back to site
-          </a>
+          </Link>
           <button onClick={handleLogout}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +142,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="font-bold text-gray-900">Vibe Caffè Admin</span>
+          <span className="font-bold text-gray-900">Cafe Tortuga Admin</span>
         </header>
 
         <main className="flex-1 p-6">

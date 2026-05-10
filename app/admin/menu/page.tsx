@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 type MenuItem = {
   id: number;
@@ -27,6 +28,7 @@ export default function MenuAdminPage() {
     setLoading(false);
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load(); }, []);
 
   const categories = [...new Set(items.map(i => i.category))];
@@ -91,16 +93,23 @@ export default function MenuAdminPage() {
 
   return (
     <div>
-      <div className="mb-6 flex justify-between items-start">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Menu & Prices</h1>
           <p className="text-gray-500 text-sm mt-1">Edit directly — changes save automatically</p>
         </div>
-        <button onClick={() => setShowAddCategory(!showAddCategory)}
-          className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all"
-          style={{ background: '#F97316' }}>
-          + Add Category
-        </button>
+        <div className="flex gap-2">
+          <Link href="/admin/menu/new"
+            className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all"
+            style={{ background: '#F97316' }}>
+            + Tambah Menu
+          </Link>
+          <button onClick={() => setShowAddCategory(!showAddCategory)}
+            className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all"
+            style={{ background: '#14B8A6' }}>
+            + Add Category
+          </button>
+        </div>
       </div>
 
       {/* ADD CATEGORY */}
@@ -139,7 +148,7 @@ export default function MenuAdminPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100">
-                  {['Name', 'Description', 'Price (£)', 'Available', ''].map(h => (
+                  {['Name', 'Description', 'Price (Rp)', 'Available', ''].map(h => (
                     <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>

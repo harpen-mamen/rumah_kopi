@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
+import { fallbackHome, publicAssetUrl, type PublicHomeData } from '@/lib/public-content';
 
 function useVisible() {
   const ref = useRef<HTMLDivElement>(null);
@@ -17,27 +18,39 @@ function useVisible() {
 }
 
 export default function About() {
+  const [content, setContent] = useState<PublicHomeData>(fallbackHome);
   const text = useVisible();
   const image = useVisible();
+
+  useEffect(() => {
+    fetch('/api/home')
+      .then(res => res.json())
+      .then(data => setContent(data.data || fallbackHome))
+      .catch(() => setContent(fallbackHome));
+  }, []);
+
+  const site = content.site_setting || fallbackHome.site_setting!;
+  const about = content.about || fallbackHome.about!;
+  const paragraphs = (about.content || fallbackHome.about!.content || '')
+    .split(/\n{2,}/)
+    .map(part => part.trim())
+    .filter(Boolean);
+  const gallery = (content.gallery || []).slice(0, 3);
+  const testimonials = (content.testimonials || []).slice(0, 3);
 
   return (
     <section id="about" className="py-16 px-6 bg-gray-200">
       <div className="max-w-7xl mx-auto">
-
-        {/* HEADER */}
         <div className="text-center mb-10">
           <h2 className="font-bold text-gray-900 mb-3" style={{ fontSize: 'clamp(1.6rem, 5vw, 2.8rem)' }}>
-            Our <span className="text-amber-600">Story</span>
+            {about.title || 'Cerita'} <span className="text-amber-600">Kami</span>
           </h2>
           <p className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto">
-            Born from a passion for coffee, people, and craft
+            {about.subtitle || site.description || 'Coffee, people, and craft.'}
           </p>
         </div>
 
-        {/* CONTENT — imagine stânga, text dreapta */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-
-          {/* IMAGINE */}
           <div
             ref={image.ref}
             style={{
@@ -45,16 +58,15 @@ export default function About() {
               transform: image.visible ? 'translateX(0)' : 'translateX(-40px)',
               transition: 'opacity 0.7s ease, transform 0.7s ease',
             }}
-            className="rounded-3xl overflow-hidden shadow-xl aspect-[4/5]"
+            className="rounded-lg overflow-hidden shadow-xl aspect-[4/5]"
           >
             <img
-              src="/about-interior.jpg"
-              alt="Vibe Caffè interior"
+              src={publicAssetUrl(about.image) || '/about-interior.jpg'}
+              alt={about.title || 'Interior cafe'}
               className="w-full h-full object-cover"
             />
           </div>
 
-          {/* TEXT */}
           <div
             ref={text.ref}
             style={{
@@ -64,41 +76,68 @@ export default function About() {
             }}
             className="flex flex-col gap-6"
           >
-            {/* Badge */}
             <span className="inline-block self-start px-4 py-1.5 bg-gray-300 text-gray-600 text-sm font-semibold rounded-full tracking-wide uppercase">
-              Est. 2019 · Milton Keynes
+              {site.tagline || 'Coffee, Space, and Island Vibes'}
             </span>
 
-            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-              Vibe Caffè started with one simple idea: a neighbourhood coffee shop that feels like coming home. We opened in Milton Keynes with a single espresso machine and an obsession with getting every cup exactly right.
-            </p>
+            {paragraphs.map((paragraph, index) => (
+              <p key={index} className="text-gray-600 text-base sm:text-lg leading-relaxed">
+                {paragraph}
+              </p>
+            ))}
 
-            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-              Every bean is sourced from small farms — from Ethiopia to Colombia. We roast in small batches so what's in your cup is never generic, always memorable.
-            </p>
+            {about.button_text && about.button_url && (
+              <a
+                href={about.button_url}
+                className="self-start px-6 py-3 rounded-lg bg-amber-500 text-white font-semibold hover:bg-amber-400 transition-colors"
+              >
+                {about.button_text}
+              </a>
+            )}
 
-            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-              But Vibe has always been about more than coffee. It's the morning regulars, the friends who linger, the barista who knows your name. We built this place for all of them — and for you.
-            </p>
-
-            {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mt-4 pt-6 border-t border-gray-300">
               <div className="text-center">
-                <p className="text-3xl font-bold text-amber-500">5+</p>
-                <p className="text-sm text-gray-400 mt-1">Years of craft</p>
+                <p className="text-3xl font-bold text-amber-500">{content.featured_menu?.length || 0}+</p>
+                <p className="text-sm text-gray-400 mt-1">Menu unggulan</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-amber-500">12</p>
-                <p className="text-sm text-gray-400 mt-1">Coffee origins</p>
+                <p className="text-3xl font-bold text-amber-500">{gallery.length || 3}</p>
+                <p className="text-sm text-gray-400 mt-1">Galeri tempat</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold text-amber-500">∞</p>
-                <p className="text-sm text-gray-400 mt-1">Good moments</p>
+                <p className="text-3xl font-bold text-amber-500">{testimonials.length || '∞'}</p>
+                <p className="text-sm text-gray-400 mt-1">Ulasan tamu</p>
               </div>
             </div>
           </div>
-
         </div>
+
+        {gallery.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12">
+            {gallery.map(item => (
+              <figure key={item.id} className="overflow-hidden rounded-lg bg-white">
+                <img src={publicAssetUrl(item.image)} alt={item.title} className="h-64 w-full object-cover" />
+                <figcaption className="p-4">
+                  <p className="font-semibold text-gray-900">{item.title}</p>
+                  {item.caption && <p className="text-sm text-gray-500 mt-1">{item.caption}</p>}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        )}
+
+        {testimonials.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            {testimonials.map(testimonial => (
+              <div key={testimonial.id} className="bg-white rounded-lg p-5 border border-gray-100">
+                <div className="text-amber-500 text-sm mb-3">{'★'.repeat(testimonial.rating || 5)}</div>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">&quot;{testimonial.message}&quot;</p>
+                <p className="font-semibold text-gray-900">{testimonial.customer_name}</p>
+                {testimonial.customer_position && <p className="text-xs text-gray-400">{testimonial.customer_position}</p>}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

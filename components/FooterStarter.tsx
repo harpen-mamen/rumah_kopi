@@ -1,77 +1,67 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { fallbackHome, formatHour, publicAssetUrl, type PublicHomeData } from '@/lib/public-content';
+
 export default function FooterStarter() {
+  const [content, setContent] = useState<PublicHomeData>(fallbackHome);
+
+  useEffect(() => {
+    fetch('/api/home')
+      .then(res => res.json())
+      .then(data => setContent(data.data || fallbackHome))
+      .catch(() => setContent(fallbackHome));
+  }, []);
+
+  const site = content.site_setting || fallbackHome.site_setting!;
+  const hours = content.opening_hours || [];
+  const year = new Date().getFullYear();
+
   return (
     <footer>
-      {/* Wave SVG */}
       <div style={{ background: '#f3f4f6', lineHeight: 0 }}>
         <svg viewBox="0 0 1200 80" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: '60px' }}>
           <path d="M0,40 C200,80 400,0 600,40 C800,80 1000,0 1200,40 L1200,80 L0,80 Z" fill="#111827" />
         </svg>
       </div>
 
-      {/* Content */}
       <div style={{ background: '#111827' }} className="text-gray-300">
         <div className="max-w-6xl mx-auto px-6 pt-10 pb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
-
-            {/* Col 1 — Brand */}
             <div>
-              <a href="/" className="flex items-center gap-2 mb-3">
-                <svg className="w-6 h-6 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 8h1a4 4 0 0 1 0 8h-1" />
-                  <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
-                  <line x1="6" y1="2" x2="6" y2="4" />
-                  <line x1="10" y1="2" x2="10" y2="4" />
-                  <line x1="14" y1="2" x2="14" y2="4" />
-                </svg>
-                <span className="font-bold text-white text-lg">Vibe <span className="text-amber-400">Caffè</span></span>
+              <a href="/" className="flex items-center gap-3 mb-3">
+                {site.logo ? (
+                  <img src={publicAssetUrl(site.logo)} alt={site.site_name || 'Logo'} className="w-9 h-9 object-contain rounded" />
+                ) : (
+                  <svg className="w-6 h-6 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 8h1a4 4 0 0 1 0 8h-1" />
+                    <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
+                    <line x1="6" y1="2" x2="6" y2="4" />
+                    <line x1="10" y1="2" x2="10" y2="4" />
+                    <line x1="14" y1="2" x2="14" y2="4" />
+                  </svg>
+                )}
+                <span className="font-bold text-white text-lg">{site.site_name || 'TORTUGA AREA'}</span>
               </a>
               <p className="text-sm text-gray-400 leading-relaxed mb-4">
-                Specialty coffee in the heart of Milton Keynes — slow down, connect, and savour every sip.
+                {site.description || site.tagline || 'Coffee, space, and island vibes.'}
               </p>
-              {/* Social icons */}
               <div className="flex gap-3">
-                <a href="https://instagram.com/vibecaffe" target="_blank" rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.25)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}>
-                  <svg className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                  </svg>
-                </a>
-                <a href="https://facebook.com/vibecaffe" target="_blank" rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.25)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}>
-                  <svg className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                </a>
-                <a href="https://tiktok.com/@vibecaffe" target="_blank" rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(249,115,22,0.25)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}>
-                  <svg className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/>
-                  </svg>
-                </a>
+                {site.instagram_url && <a href={site.instagram_url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-amber-400">Instagram</a>}
+                {site.tiktok_url && <a href={site.tiktok_url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-amber-400">TikTok</a>}
+                {site.whatsapp && <a href={`https://wa.me/${site.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-amber-400">WhatsApp</a>}
               </div>
             </div>
 
-            {/* Col 2 — Quick Links */}
             <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Halaman</h4>
               <ul className="flex flex-col gap-2 text-sm">
                 {[
-                  { label: 'Why Vibe', href: '/#features' },
-                  { label: 'Menu', href: '/#menu' },
-                  { label: 'Our Story', href: '/#about' },
-                  { label: 'Find Us', href: '/#location' },
-                  { label: 'Reserve a Table', href: '/reservations' },
+                  { label: 'Keunggulan', href: '/#features' },
+                  { label: 'Menu', href: '/menu' },
+                  { label: 'Cerita', href: '/about' },
+                  { label: 'Lokasi', href: '/location' },
+                  { label: 'Booking', href: '/reservations' },
                 ].map(({ label, href }) => (
                   <li key={label}>
                     <a href={href} className="text-gray-400 hover:text-amber-400 transition-colors">{label}</a>
@@ -80,38 +70,25 @@ export default function FooterStarter() {
               </ul>
             </div>
 
-            {/* Col 3 — Contact & Hours */}
             <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Visit Us</h4>
+              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Kunjungi Kami</h4>
               <ul className="flex flex-col gap-3 text-sm text-gray-400">
-                <li className="flex gap-2">
-                  <span className="text-amber-400 mt-0.5">📍</span>
-                  <span>Milton Keynes, UK</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-amber-400 mt-0.5">📞</span>
-                  <span>+44 1908 000 000</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-amber-400 mt-0.5">✉️</span>
-                  <span>hello@vibecaffe.com</span>
-                </li>
-                <li className="flex gap-2 mt-1">
-                  <span className="text-amber-400 mt-0.5">🕐</span>
-                  <div>
-                    <p>Mon–Fri: 7:00 – 20:00</p>
-                    <p>Sat–Sun: 8:00 – 21:00</p>
-                  </div>
-                </li>
+                {site.address && <li>{site.address}</li>}
+                {site.phone && <li>{site.phone}</li>}
+                {site.email && <li>{site.email}</li>}
+                {hours.slice(0, 3).map(hour => (
+                  <li key={hour.id} className="flex justify-between gap-4">
+                    <span>{hour.day}</span>
+                    <span className="text-amber-400">{formatHour(hour)}</span>
+                  </li>
+                ))}
               </ul>
             </div>
-
           </div>
 
-          {/* Bottom bar */}
           <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
-            <p>© 2026 Vibe Caffè. All rights reserved.</p>
-            <p>Built with Next.js + Tailwind CSS</p>
+            <p>© {year} {site.site_name || 'TORTUGA AREA'}. All rights reserved.</p>
+            <p>Konten tersinkron dengan dashboard admin.</p>
           </div>
         </div>
       </div>

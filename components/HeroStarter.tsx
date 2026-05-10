@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { fallbackHome, publicAssetUrl, type PublicHomeData } from '@/lib/public-content';
 
 /**
  * 🎯 HERO STARTER - Cu video background
@@ -8,7 +9,15 @@ import { useState, useEffect, useRef } from 'react';
 
 export default function HeroStarter() {
   const [hovered, setHovered] = useState(false);
+  const [content, setContent] = useState<PublicHomeData>(fallbackHome);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    fetch('/api/home')
+      .then(res => res.json())
+      .then(data => setContent(data.data || fallbackHome))
+      .catch(() => setContent(fallbackHome));
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -36,6 +45,26 @@ export default function HeroStarter() {
     window.scrollTo({ top, behavior: 'smooth' });
   };
 
+  const site = content.site_setting || fallbackHome.site_setting!;
+  const hero = content.hero || fallbackHome.hero!;
+  const title = hero.headline || site.site_name || fallbackHome.hero!.headline;
+  const eyebrow = hero.subheadline || site.tagline || fallbackHome.hero!.subheadline;
+  const description = hero.description || site.description || fallbackHome.hero!.description;
+  const primaryText = hero.primary_button_text || 'Lihat Menu';
+  const primaryUrl = hero.primary_button_url || '#menu';
+  const secondaryText = hero.secondary_button_text || 'Lokasi';
+  const secondaryUrl = hero.secondary_button_url || '#location';
+  const mediaUrl = publicAssetUrl(hero.hero_media_type === 'video' ? hero.hero_video : hero.hero_image);
+  const overlayOpacity = Number(hero.overlay_opacity ?? 0.52);
+
+  const handleCta = (url: string) => {
+    if (url.startsWith('#')) {
+      scrollToSection(url.slice(1));
+      return;
+    }
+    window.location.href = url;
+  };
+
   return (
     <section className="relative min-h-screen flex items-center bg-stone-800 pt-20">
 
@@ -46,15 +75,23 @@ export default function HeroStarter() {
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className={`absolute inset-0 w-full h-full object-cover ${hero.hero_media_type === 'image' ? 'hidden' : ''}`}
         style={{ pointerEvents: 'none' }}
       >
-        <source src="/hero-coffee.mp4" type="video/mp4" />
+        <source src={mediaUrl || '/hero-coffee.mp4'} type="video/mp4" />
       </video>
+
+      {hero.hero_media_type === 'image' && (
+        <img
+          src={mediaUrl || '/about-interior.jpg'}
+          alt={title || 'Coffee shop hero'}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
 
       {/* OVERLAY */}
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.5) 100%)'
+        background: `linear-gradient(to bottom, rgba(0,0,0,${Math.max(overlayOpacity - 0.25, 0.12)}) 0%, rgba(0,0,0,${overlayOpacity}) 100%)`
       }} />
 
       {/* CONTINUT - aliniat cu navbar */}
@@ -66,7 +103,7 @@ export default function HeroStarter() {
           {/* DESCRIPTOR */}
           <div className="hero-animate hero-delay-1 mb-2">
             <span className="handwrite text-2xl sm:text-4xl" style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}>
-              Welcome to your favourite place
+              {eyebrow}
             </span>
           </div>
 
@@ -80,7 +117,7 @@ export default function HeroStarter() {
               fontSize: 'clamp(1.6rem, 6vw, 3.5rem)',
             }}
           >
-            Coffee. Community. Connection.
+            {title}
           </h1>
 
           {/* SUBTITLU */}
@@ -88,35 +125,41 @@ export default function HeroStarter() {
             className="hero-animate hero-delay-3 text-xs sm:text-sm mt-4 mb-8 font-medium tracking-wider sm:tracking-widest uppercase"
             style={{ color: '#FFF8F0', textShadow: '2px 4px 12px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)' }}
           >
-            Freshly roasted · Crafted with care · Always a warm welcome
+            {description}
           </p>
 
           {/* BUTOANE CTA */}
           <div className="hero-animate hero-delay-3 flex flex-col sm:flex-row gap-3">
             {/* PRIMARY CTA */}
             <button
-              onClick={() => scrollToSection('menu')}
+              onClick={() => handleCta(primaryUrl)}
               className="px-8 py-3 sm:py-4 bg-amber-500 hover:bg-amber-400 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/40 text-center text-sm sm:text-base"
             >
-              See Our Menu
+              {primaryText}
             </button>
             {/* SECONDARY — row pe mobile */}
             <div className="flex flex-row sm:flex-row gap-3">
               <a
-                href="https://instagram.com/vibecaffe"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={site.instagram_url || '#menu'}
+                target={site.instagram_url ? '_blank' : undefined}
+                rel={site.instagram_url ? 'noopener noreferrer' : undefined}
                 className="flex-1 sm:flex-none px-5 sm:px-8 py-3 sm:py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full border-2 border-white/60 hover:border-white transition-all duration-300 backdrop-blur-sm text-center text-sm sm:text-base"
               >
                 Instagram
               </a>
               <a
-                href="https://www.google.com/maps/search/Vibe+Caffe+Milton+Keynes"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={secondaryUrl}
+                target={secondaryUrl.startsWith('http') ? '_blank' : undefined}
+                rel={secondaryUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                onClick={(event) => {
+                  if (secondaryUrl.startsWith('#')) {
+                    event.preventDefault();
+                    handleCta(secondaryUrl);
+                  }
+                }}
                 className="flex-1 sm:flex-none px-5 sm:px-8 py-3 sm:py-4 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-full border-2 border-white/60 hover:border-white transition-all duration-300 backdrop-blur-sm text-center text-sm sm:text-base"
               >
-                Leave a Review
+                {secondaryText}
               </a>
             </div>
           </div>

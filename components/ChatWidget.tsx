@@ -49,7 +49,7 @@ const LANGUAGES = [
 ];
 
 const WELCOME_BY_LANG: Record<string, string> = {
-  en: "Hey, welcome in! ☕ I'm Cleo — think of me as your barista on standby. What can I help you with today?",
+  en: "Hey, welcome to Cafe Tortuga! ☕ I'm Cleo — your virtual barista. Tell me what you're craving and I'll help you pick something.",
   ro: "Bună, bine ai venit! ☕ Sunt Cleo — barista tău de serviciu. Cu ce te pot ajuta azi?",
   fr: "Bonjour et bienvenue! ☕ Je suis Cleo, votre barista à disposition. Comment puis-je vous aider aujourd'hui?",
   de: "Hey, herzlich willkommen! ☕ Ich bin Cleo — dein Barista auf Abruf. Wie kann ich dir heute helfen?",
@@ -64,50 +64,50 @@ const QUICK_REPLIES_BY_LANG: Record<string, { label: string; text: string }[]> =
   en: [
     { label: "☕ What's good here?", text: "What do you recommend?" },
     { label: '📋 See the menu', text: 'Show me the full menu' },
+    { label: '🛒 Order menu', text: 'I want to order menu items' },
     { label: '📅 Book a table', text: 'I want to book a table' },
-    { label: '⏰ When are you open?', text: 'What are your opening hours?' },
   ],
   ro: [
     { label: '📋 Vezi meniu', text: 'Arată-mi meniul' },
     { label: '⭐ Recomandări', text: 'Ce recomandați?' },
+    { label: '🛒 Comandă', text: 'Vreau să comand produse din meniu' },
     { label: '📅 Rezervări', text: 'Vreau să fac o rezervare' },
-    { label: '⏰ Program', text: 'Care este programul?' },
   ],
   fr: [
     { label: '📋 Voir menu', text: 'Montrez-moi le menu' },
     { label: '⭐ Recommandations', text: 'Que recommandez-vous?' },
+    { label: '🛒 Commander', text: 'Je veux commander des produits du menu' },
     { label: '📅 Réservations', text: 'Je veux faire une réservation' },
-    { label: '⏰ Horaires', text: 'Quels sont vos horaires?' },
   ],
   de: [
     { label: '📋 Menü ansehen', text: 'Zeig mir die Speisekarte' },
     { label: '⭐ Empfehlungen', text: 'Was empfehlen Sie?' },
+    { label: '🛒 Bestellen', text: 'Ich möchte Menüartikel bestellen' },
     { label: '📅 Reservierungen', text: 'Ich möchte reservieren' },
-    { label: '⏰ Öffnungszeiten', text: 'Was sind Ihre Öffnungszeiten?' },
   ],
   es: [
     { label: '📋 Ver menú', text: 'Muéstrame el menú' },
     { label: '⭐ Recomendaciones', text: '¿Qué recomiendan?' },
+    { label: '🛒 Pedir', text: 'Quiero pedir productos del menú' },
     { label: '📅 Reservas', text: 'Quiero hacer una reserva' },
-    { label: '⏰ Horario', text: '¿Cuál es su horario?' },
   ],
   it: [
     { label: '📋 Vedi menu', text: 'Mostrami il menu' },
     { label: '⭐ Consigli', text: 'Cosa consigliate?' },
+    { label: '🛒 Ordina', text: 'Voglio ordinare prodotti dal menu' },
     { label: '📅 Prenotazioni', text: 'Voglio fare una prenotazione' },
-    { label: '⏰ Orari', text: 'Quali sono gli orari?' },
   ],
   pl: [
     { label: '📋 Zobacz menu', text: 'Pokaż mi menu' },
     { label: '⭐ Rekomendacje', text: 'Co polecacie?' },
+    { label: '🛒 Zamów', text: 'Chcę zamówić pozycje z menu' },
     { label: '📅 Rezerwacje', text: 'Chcę zarezerwować stolik' },
-    { label: '⏰ Godziny otwarcia', text: 'Jakie są godziny otwarcia?' },
   ],
   uk: [
     { label: '📋 Переглянути меню', text: 'Покажи мені меню' },
     { label: '⭐ Рекомендації', text: 'Що рекомендуєте?' },
+    { label: '🛒 Замовити', text: 'Хочу замовити позиції з меню' },
     { label: '📅 Бронювання', text: 'Хочу забронювати столик' },
-    { label: '⏰ Години роботи', text: 'Які у вас години роботи?' },
   ],
 };
 
@@ -196,7 +196,7 @@ function getContextualReplies(replyText: string, lang: string): { label: string;
   const isMenuContext = lower.includes('menu') || lower.includes('espresso') || lower.includes('latte')
     || lower.includes('cappuccino') || lower.includes('cold brew') || lower.includes('pastry')
     || lower.includes('croissant') || lower.includes('meniu') || lower.includes('cafea')
-    || lower.includes('prețuri') || lower.includes('price') || lower.includes('£');
+    || lower.includes('prețuri') || lower.includes('price') || lower.includes('harga') || lower.includes('rp');
   const isReservationContext = lower.includes('reserv') || lower.includes('rezerv')
     || lower.includes('book') || lower.includes('table') || lower.includes('masa')
     || lower.includes('prenotar') || lower.includes('réserv') || lower.includes('reservier');
@@ -240,6 +240,7 @@ export default function ChatWidget() {
       badgeTimerRef.current = setTimeout(() => setBadge(true), 30000);
     } else {
       if (badgeTimerRef.current) clearTimeout(badgeTimerRef.current);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBadge(false);
     }
     return () => { if (badgeTimerRef.current) clearTimeout(badgeTimerRef.current); };
@@ -432,7 +433,7 @@ export default function ChatWidget() {
             <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-lg shrink-0">☕</div>
             <div>
               <p className="font-bold text-white text-sm leading-tight" style={{ fontFamily: 'var(--font-plus-jakarta-sans, sans-serif)' }}>Cleo</p>
-              <p className="text-white/70 text-xs">Barista Virtual · Vibe Caffè</p>
+              <p className="text-white/70 text-xs">Barista Virtual · Cafe Tortuga</p>
             </div>
             <div className="ml-auto flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-400 shadow shadow-green-400" />

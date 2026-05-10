@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { formatPrice, publicAssetUrl } from '@/lib/public-content';
 
 type MenuItem = {
   id: number;
   category: string;
   name: string;
-  description: string;
+  description?: string | null;
   price: number;
   available: boolean;
+  image?: string | null;
+  is_featured?: boolean;
 };
 
 const IMAGES: Record<string, string> = {
@@ -23,6 +26,7 @@ const IMAGES: Record<string, string> = {
   'Turmeric Latte': '/turmeric-latte.webp',
   'Matcha Latte': 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&auto=format&fit=crop',
   'Rose Cortado': '/rose-cortado.jpg',
+  'Tortuga Signature': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop',
   'Vibe Signature': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop',
   'Classic Cold Brew': '/cb-classic.jpg',
   'Nitro Cold Brew': '/cb-nitro.jpg',
@@ -51,7 +55,10 @@ export default function Menu() {
     fetch('/api/menu')
       .then(r => r.json())
       .then(data => {
-        if (!data.success) return;
+        if (!data.success) {
+          setLoading(false);
+          return;
+        }
         const items: MenuItem[] = data.data.filter((i: MenuItem) => i.available);
         const grouped: Record<string, MenuItem[]> = {};
         items.forEach(item => {
@@ -79,10 +86,10 @@ export default function Menu() {
         {/* HEADER */}
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4">
-            Our <span className="text-amber-500">Menu</span>
+            Menu <span className="text-amber-500">Pilihan</span>
           </h2>
           <p className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto">
-            Crafted drinks and freshly baked treats — something for everyone.
+            Semua kategori, harga, gambar, dan status tersedia mengikuti dashboard admin.
           </p>
         </div>
 
@@ -112,7 +119,7 @@ export default function Menu() {
                   className="group bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer">
                   <div className="aspect-[4/3] overflow-hidden">
                     <img
-                      src={IMAGES[item.name] || DEFAULT_IMAGE}
+                      src={publicAssetUrl(item.image) || IMAGES[item.name] || DEFAULT_IMAGE}
                       alt={item.name}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_IMAGE; }}
@@ -121,9 +128,9 @@ export default function Menu() {
                   <div className="p-5">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
-                      <span className="text-amber-500 font-bold text-lg ml-4 shrink-0">£{item.price.toFixed(2)}</span>
+                      <span className="text-amber-500 font-bold text-lg ml-4 shrink-0">{formatPrice(item.price)}</span>
                     </div>
-                    <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
+                    <p className="text-gray-500 text-sm leading-relaxed">{item.description || 'Disiapkan segar oleh tim kami.'}</p>
                   </div>
                 </div>
               ))}

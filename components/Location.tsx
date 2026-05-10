@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
+import { fallbackHome, formatHour, type PublicHomeData } from '@/lib/public-content';
 
 function useVisible() {
   const ref = useRef<HTMLDivElement>(null);
@@ -16,15 +17,24 @@ function useVisible() {
   return { ref, visible };
 }
 
-const hours = [
-  { day: 'Monday – Friday', time: '7:00 am – 8:00 pm' },
-  { day: 'Saturday',        time: '8:00 am – 9:00 pm' },
-  { day: 'Sunday',          time: '9:00 am – 6:00 pm' },
-];
-
 export default function Location() {
+  const [content, setContent] = useState<PublicHomeData>(fallbackHome);
   const info = useVisible();
   const map  = useVisible();
+
+  useEffect(() => {
+    fetch('/api/home')
+      .then(res => res.json())
+      .then(data => setContent(data.data || fallbackHome))
+      .catch(() => setContent(fallbackHome));
+  }, []);
+
+  const site = content.site_setting || fallbackHome.site_setting!;
+  const hours = content.opening_hours?.length ? content.opening_hours : [
+    { id: 1, day: 'Monday - Friday', open_time: '07:00', close_time: '20:00' },
+    { id: 2, day: 'Saturday', open_time: '08:00', close_time: '21:00' },
+    { id: 3, day: 'Sunday', open_time: '09:00', close_time: '18:00' },
+  ];
 
   return (
     <section
@@ -36,10 +46,10 @@ export default function Location() {
         {/* HEADER */}
         <div className="text-center mb-10">
           <h2 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4">
-            Find <span className="text-amber-500">Us</span>
+            Temukan <span className="text-amber-500">Kami</span>
           </h2>
           <p className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto">
-            Pop in, take a seat, and let us make you something special.
+            {site.address || 'Datang, pilih tempat duduk, dan biarkan kami membuatkan sesuatu yang spesial.'}
           </p>
         </div>
 
@@ -66,7 +76,7 @@ export default function Location() {
               </div>
               <div>
                 <p className="text-gray-900 font-semibold text-lg mb-1">Address</p>
-                <p className="text-gray-500 leading-relaxed">14 Midsummer Boulevard<br />Milton Keynes, MK9 3BN<br />United Kingdom</p>
+                <p className="text-gray-500 leading-relaxed whitespace-pre-line">{site.address || 'Milton Keynes, United Kingdom'}</p>
               </div>
             </div>
 
@@ -80,10 +90,10 @@ export default function Location() {
               <div className="w-full">
                 <p className="text-gray-900 font-semibold text-lg mb-3">Opening Hours</p>
                 <div className="flex flex-col gap-2">
-                  {hours.map(({ day, time }) => (
-                    <div key={day} className="flex justify-between items-center py-2 border-b border-zinc-300">
-                      <span className="text-gray-500 text-sm">{day}</span>
-                      <span className="text-amber-600 text-sm font-medium">{time}</span>
+                  {hours.map((hour) => (
+                    <div key={hour.id || hour.day} className="flex justify-between items-center py-2 border-b border-zinc-300">
+                      <span className="text-gray-500 text-sm">{hour.day}</span>
+                      <span className="text-amber-600 text-sm font-medium">{formatHour(hour)}</span>
                     </div>
                   ))}
                 </div>
@@ -99,14 +109,15 @@ export default function Location() {
               </div>
               <div>
                 <p className="text-gray-900 font-semibold text-lg mb-1">Contact</p>
-                <p className="text-gray-500">+44 1908 000 000</p>
-                <p className="text-gray-500">hello@vibecaffe.co.uk</p>
+                {site.phone && <p className="text-gray-500">{site.phone}</p>}
+                {site.whatsapp && <p className="text-gray-500">{site.whatsapp}</p>}
+                {site.email && <p className="text-gray-500">{site.email}</p>}
               </div>
             </div>
 
             {/* CTA */}
             <a
-              href="https://maps.google.com/?q=Midsummer+Boulevard+Milton+Keynes"
+              href={site.google_maps_url || 'https://maps.google.com/?q=Midsummer+Boulevard+Milton+Keynes'}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 self-start px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white font-semibold rounded-lg transition-colors duration-200"
@@ -130,14 +141,14 @@ export default function Location() {
             }}
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2461.234!2d-0.7594!3d52.0406!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4877a18a03ece3c5%3A0x8b8b8b8b8b8b8b8b!2sMidsummer%20Blvd%2C%20Milton%20Keynes!5e0!3m2!1sen!2suk!4v1700000000000"
+              src={`https://www.google.com/maps?q=${encodeURIComponent(site.address || 'Milton Keynes, United Kingdom')}&output=embed`}
               width="100%"
               height="100%"
               style={{ border: 0, height: '100%', display: 'block' }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Vibe Caffè location"
+              title="Cafe Tortuga location"
             />
           </div>
 
